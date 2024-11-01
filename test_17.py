@@ -12,7 +12,7 @@ from explosion import *
 from debug import debug_2
 from alien_laser import *
 from capture_player import *
-
+from attack_curves_relativas import *
 
 
 # test github 2.1
@@ -449,14 +449,15 @@ class Alien(pygame.sprite.Sprite):
         self.last_shot_time = 0
 
         self.capture_player = CapturePlayer(self) 
+        self.curvas_relativas = Curvas_relativas (self, formation)
         self.is_capture_formation = False  # Indica si el alienígena está en una formación de captura
         
-        rotated_images_cache = {}
+       
         
         
-    def start_capture(self):
-        self.capture_player.define_capture_curves_1()  # Llama a la captura específica
-        self.capture_player.define_capture_curves_2()  # Llama a la captura específica
+    # def start_capture(self):
+    #     self.capture_player.define_capture_curves_1()  # Llama a la captura específica
+    #     self.capture_player.define_capture_curves_2()  # Llama a la captura específica
     def on_laser_hit(self):
         """Maneja lo que sucede cuando el alien es impactado por un láser."""
         if self.alien_type == "boss_green" and self.hit_count == 0:
@@ -1071,116 +1072,7 @@ class Alien(pygame.sprite.Sprite):
         ])          
         
         
-    def define_attack_curves_relative(self, offset_x=-50, offset_y=0):
-    # Curva base en coordenadas relativas
-        random_x = random.randint(50, 170)
-        player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
-        relative_player_x = player_x - self.x
-        width = self.formation.game.WINDOW_WIDTH
-        base_curve_1 = np.array([
-            [0, 0],  # Comienza desde la posición actual
-            [-214, 270],  # Punto intermedio ajustado
-            [-28, 456],  # Otro punto ajustado
-            [100, 331]   # Final en una posición aleatoria
-        ])
-        
-        base_curve_2 = np.array([
-            [100, 331] , 
-            [180, 181],
-            [-70, 100],
-            [-92, 264]  # Final en una posición aleatoria
-        ])
-        
-        base_curve_3 = np.array([
-            [-92, 264],
-            [-60, 438],  # Un ejemplo de punto intermedio
-            [291, 570],  # Otro punto
-            [relative_player_x, 1000]  # Final en una posición aleatoria
-        ])
-        
-        
-        base_curve_4 = np.array([
-            [20, -230],
-            [16, -190],  # Un ejemplo de punto intermedio
-            [8, -105],  # Otro punto
-            [ 0, 0]  # Final en una posición aleatoria
-        ])
-        
-
-        # Aplicar desplazamientos relativos a los puntos de control
-        adjusted_curve_1 = [point + np.array([offset_x, 0]) for point in base_curve_1]
-        adjusted_curve_2 = [point + np.array([offset_x, 0]) for point in base_curve_2]  
-        adjusted_curve_3 = [point + np.array([offset_x, 0]) for point in base_curve_3]
-        adjusted_curve_4 = [point + np.array([offset_x, 0]) for point in base_curve_4]
-
-        # Trasladar la curva al punto inicial del alienígena
-        starting_point = np.array([self.x, self.y])
-        self.attack_curves = [
-        [starting_point + point for point in adjusted_curve_1],
-        [starting_point + point for point in adjusted_curve_2],
-        [starting_point + point for point in adjusted_curve_3],
-        [starting_point + point for point in adjusted_curve_4]
-    ]
-
-        # Agregar más segmentos si es necesario (por ejemplo, retorno al grid)
-        # Aquí puedes definir más curvas de ataque ajustadas
-
-
     
-    def define_attack_curves_relative_2(self, offset_x=0, offset_y=0):
-    # Curva base en coordenadas relativas
-        random_x = random.randint(-150, -70)
-        player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
-        relative_player_x = player_x - self.x
-        width = self.formation.game.WINDOW_WIDTH
-        base_curve_1 = np.array([
-            [0, 0],  # Comienza desde la posición actual
-            [214, 270],  # Punto intermedio ajustado
-            [28, 456],  # Otro punto ajustado
-            [-100, 331]   # Final en una posición aleatoria
-        ])
-        
-        base_curve_2 = np.array([
-            [-100, 331] , 
-            [-180, 181],
-            [70, 100],
-            [92, 264]  # Final en una posición aleatoria
-        ])
-        
-        base_curve_3 = np.array([
-            [92, 264],
-            [60, 438],  # Un ejemplo de punto intermedio
-            [-291, 570],  # Otro punto
-            [relative_player_x, 1000]  # Final en una posición aleatoria
-        ])
-        
-        
-        base_curve_4 = np.array([
-            [-20, -230],
-            [-16, -190],  # Un ejemplo de punto intermedio
-            [-8, -105],  # Otro punto
-            [ 0, 0]  # Final en una posición aleatoria
-        ])
-        
-
-        # Aplicar desplazamientos relativos a los puntos de control
-        adjusted_curve_1 = [point + np.array([offset_x, 0]) for point in base_curve_1]
-        adjusted_curve_2 = [point + np.array([offset_x, 0]) for point in base_curve_2]  
-        adjusted_curve_3 = [point + np.array([offset_x, 0]) for point in base_curve_3]
-        adjusted_curve_4 = [point + np.array([offset_x, 0]) for point in base_curve_4]
-
-        # Trasladar la curva al punto inicial del alienígena
-        starting_point = np.array([self.x, self.y])
-        self.attack_curves = [
-        [starting_point + point for point in adjusted_curve_1],
-        [starting_point + point for point in adjusted_curve_2],
-        [starting_point + point for point in adjusted_curve_3],
-        [starting_point + point for point in adjusted_curve_4]
-    ]
-
-        # Agregar más segmentos si es necesario (por ejemplo, retorno al grid)
-        # Aquí puedes definir más curvas de ataque ajustadas
-
     def shoot(self, delta_time):
         current_time = pygame.time.get_ticks()
         if self.attack_mode and self.curve_attack_index <=  1: 
@@ -1594,7 +1486,7 @@ class Formation:
         self.attack_formations = []
         self.define_attack_formations()
         self.allowed_attack_types = ['red', 'blue', 'boss_green', 'boss_green, red, red']
-
+        #self.curvas_relativas = Curvas_relativas (self)
     def create_formation(self):
         """Crear alienígenas y calcular sus posiciones objetivo."""
         self.add_aliens_to_group("red", 16)
@@ -1972,10 +1864,10 @@ class Formation:
                 # Asignar la curva adecuada según si el alienígena es par o impar
                 if alien.mIndex % 2 == 0:
                     # Alienígenas pares usan define_attack_curves_relative
-                    alien.define_attack_curves_relative(relative_offset_x, relative_offset_y)
+                    alien.curvas_relativas.define_attack_curves_relative(relative_offset_x, relative_offset_y)
                 else:
                     # Alienígenas impares usan define_attack_curves_relative_2
-                    alien.define_attack_curves_relative_2(relative_offset_x, relative_offset_y)
+                    alien.curvas_relativas.define_attack_curves_relative_2(relative_offset_x, relative_offset_y)
 
 
                             
