@@ -15,7 +15,7 @@ from capture_player import *
 
 
 
-# test github
+# test github 2
 
 # Clase Game
 class Game:
