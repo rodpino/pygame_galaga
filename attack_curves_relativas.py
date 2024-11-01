@@ -4,6 +4,9 @@ import numpy as np
 import random
 
 class Curvas_relativas:
+    """ curvas de ataque de boss_green y alien red """
+    
+    
     def __init__(self, alien, formation):
         self.alien = alien
         self.formation = formation
