@@ -7,20 +7,21 @@ import time
 from player import *
 from laser import *
 from explosion import *
+from settings import Settings
 
 # Clase Game
 class Game:
     def __init__(self):
         # Inicializar Pygame
         pygame.init()
-
+        self.settings = Settings()
         # Configuración de la ventana
-        self.WINDOW_WIDTH = 650
-        self.WINDOW_HEIGHT = 950
+        self.settings.WIDTH = 650
+        self.settings.HEIGHT = 950
         self.SPRITE_SIZE = 16
         self.PLAYER_SIZE = (45, 45)
         self.explosion_size = (90, 90)
-        self.SCREEN = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        self.SCREEN = pygame.display.set_mode((self.settings.WIDTH, self.settings.HEIGHT))
         pygame.display.set_caption("Formación de Alienígenas con Expansión Continua")
         self.sprite_explotion_coord = [(289, 1, 32, 32), (323,1, 32, 32),(357,1, 32, 32),(391,1, 32, 32), (425,1, 32, 32)]
 
@@ -212,7 +213,7 @@ class Background_2:
     def __init__(self, game ):
         self.game = game
         self.screen = pygame.display.get_surface()
-        self.scroll_speed = 1.6
+        self.scroll_speed = 0.3
         self.toggle_interval = 40
         self.toggle_timer = 0
         self.show_first_half = True
@@ -225,8 +226,8 @@ class Background_2:
     def generate_rects(self, num_rects):
         rects = []
         for _ in range(num_rects):
-            x = random.randint(0, self.game.WINDOW_WIDTH - 4)
-            y = random.randint(0, self.game.WINDOW_HEIGHT - 4)
+            x = random.randint(0, self.game.settings.WIDTH - 4)
+            y = random.randint(0, self.game.settings.HEIGHT - 4)
             color = random.choice(self.colors)
             rects.append((pygame.Rect(x, y, 2, 1), color))
         return rects
@@ -237,7 +238,7 @@ class Background_2:
 
     def update(self, delta_time):
         self.background_y += self.scroll_speed
-        if self.background_y >= self.game.WINDOW_HEIGHT:
+        if self.background_y >= self.game.settings.HEIGHT:
             self.background_y = 0
 
         self.toggle_timer += delta_time * 200
@@ -250,11 +251,11 @@ class Background_2:
 
         if self.show_first_half:
             for rect, color in self.first_half:
-                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.WINDOW_HEIGHT))
+                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.settings.HEIGHT))
                 self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y))
         else:
             for rect, color in self.second_half:
-                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.WINDOW_HEIGHT))
+                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.settings.HEIGHT))
                 self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y))
 
     def draw_rect(self, rect, color):
@@ -436,7 +437,7 @@ class Alien(pygame.sprite.Sprite):
         
 
     def control_points(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width / 2 - 20, -10],
             [width / 2 - 10, 260],
@@ -445,7 +446,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def control_points_2(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 65, 470],
             [width - 98, 543],
@@ -479,7 +480,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_6(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width + 5, 706]),
             np.array([width - 205, 659]),
@@ -488,7 +489,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_7(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width - 212, 463]),
             np.array([width - 163, 356]),
@@ -497,7 +498,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_8(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width - 56, 517]),
             np.array([width - 123, 619]),
@@ -506,7 +507,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_9(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width / 2 + 20, -10]),
             np.array([width / 2 + 10, 260]),
@@ -514,7 +515,7 @@ class Alien(pygame.sprite.Sprite):
             np.array([65, 470])
         )
     def control_points_10(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([65, 470]),
             np.array([98, 543]),
@@ -524,7 +525,7 @@ class Alien(pygame.sprite.Sprite):
     
 
     def control_points_11(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width  / 2 - 20, -10]),
             np.array([width  / 2 - 10, 260]),
@@ -533,14 +534,14 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_12(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width / 2 + 20, -10]),
             np.array([width / 2 + 10, 260]),
             np.array([10, 305]), np.array([65, 470])
         )
     def control_points_13(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([65, 470]), np.array([98, 543]),
             np.array([width / 2 + 10, 480]),
@@ -799,7 +800,7 @@ class Formation:
             retVal_x = (self.grid_size_x + self.grid_size_x * 2 * group) * sign
 
             # Ajustar posiciones para la pantalla
-            screen_x = retVal_x + self.game.WINDOW_WIDTH // 2
+            screen_x = retVal_x + self.game.settings.WIDTH // 2
             screen_y = retVal_y + 180  # Posición objetivo en Y
             
             if alien_type == "blue":
@@ -809,7 +810,7 @@ class Formation:
             return int(screen_x), int(screen_y)
         
         # Ajustar posiciones para la pantalla para los alienígenas verdes
-        screen_x = retVal_x + self.game.WINDOW_WIDTH // 2
+        screen_x = retVal_x + self.game.settings.WIDTH // 2
         screen_y = retVal_y  # Posición objetivo en Y para los alienígenas verdes
 
         return int(screen_x), int(screen_y)

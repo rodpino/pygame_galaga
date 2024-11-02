@@ -6,6 +6,7 @@ import os
 import numpy as np
 import random
 import time
+from settings import Settings
 from player import *
 from laser import *
 from explosion import *
@@ -25,19 +26,13 @@ class Game:
         pygame.init()
 
         # Configuración de la ventana
-        self.WINDOW_WIDTH = 650
-        self.WINDOW_HEIGHT = 950
-        self.SPRITE_SIZE = 16
-        self.PLAYER_SIZE = (45, 45)
+        self.settings = Settings()
         self.explosion_size = (70, 70)
-        self.SCREEN = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
-        pygame.display.set_caption("Formación de Alienígenas con Expansión Continua")
-        self.sprite_explotion_coord = [(289, 1, 32, 32), (323,1, 32, 32),(357,1, 32, 32),(391,1, 32, 32), (425,1, 32, 32)]
+        self.SCREEN = pygame.display.set_mode((self.settings.WIDTH, self.settings.HEIGHT))
+        pygame.display.set_caption("Pygame Galaga")
+        self.sprite_explotion_coord = [(289, 1, 32, 32), (323, 1, 32, 32), (357, 1, 32, 32), (391, 1, 32, 32), (425, 1, 32, 32)]
 
-        # Colores
-        self.BLACK = (0, 0, 0)
-        self.WHITE = (255, 255, 255)
-        self.RED = (255, 0, 0)
+        
         
         # Puntaje
         self.score = 0  # Iniciar el puntaje en 0
@@ -51,7 +46,7 @@ class Game:
 
         # Cargar la hoja de sprites con la ruta actualizada
         self.SPRITE_SHEET = pygame.image.load(r"E:\Python Pygame\Python Test_6\asset\Galaga_SpritesSheet.png")
-
+        
         self.background = Background(self)
 
         # Player Setup
@@ -163,19 +158,19 @@ class Game:
     
     def draw_Game_Over(self):
         
-        game_over_text = self.FONT_score.render("Game Over", True, self.RED)
+        game_over_text = self.FONT_score.render("Game Over", True, self.settings.RED)
         
         centered_text_whidt = game_over_text.get_width()
-        centered_text = (self.WINDOW_WIDTH/2) - (centered_text_whidt // 2)
+        centered_text = (self.settings.WIDTH/2) - (centered_text_whidt // 2)
         self.SCREEN.blit(game_over_text, (centered_text, 545))
         pygame.display.update()
         
     def draw_score(self):
     # Dibuja el puntaje actual en la pantalla.
-        score_text = self.FONT_score.render("1UP", True, self.RED)
-        score_text_2 = self.FONT_score.render(f"{self.score}", True, self.WHITE)
-        high_score_text_3 = self.FONT_score.render("HIGH SCORE", True, self.RED)
-        high_score_text = self.FONT_score.render(f"{self.high_score}", True, self.WHITE)
+        score_text = self.FONT_score.render("1UP", True, self.settings.RED)
+        score_text_2 = self.FONT_score.render(f"{self.score}", True, self.settings.WHITE)
+        high_score_text_3 = self.FONT_score.render("HIGH SCORE", True, self.settings.RED)
+        high_score_text = self.FONT_score.render(f"{self.high_score}", True, self.settings.WHITE)
         
         # Posición fija para "HIGH SCORE"
         score_text_3_x = 250
@@ -235,10 +230,6 @@ class Game:
         self.last_time = current_time  # Actualiza `last_time` para el próximo ciclo
         return delta_time
 
-        
-    
-        
-    
     def run(self):
         self.running = True
 
@@ -265,7 +256,7 @@ class Game:
             Alien.sprite_animation(delta_time)
             
             # Dibujar
-            self.SCREEN.fill(self.BLACK)
+            self.SCREEN.fill(self.settings.BLACK)
             self.background.draw()
             self.formation.draw(self.SCREEN)
             self.player_group.draw(self.SCREEN)
@@ -315,8 +306,9 @@ class Alien(pygame.sprite.Sprite):
         "boss_blue": []
     }
 
-    def __init__(self, mIndex, formation, alien_type, bezier_id):
+    def __init__(self, mIndex, formation, alien_type, bezier_id, game):
         super().__init__()  # Inicializar la clase base de pygame.sprite.Sprite
+        self.game = game
         self.mIndex = mIndex
         self.bezier_id = bezier_id 
         self.formation = formation  # Referencia a la formación
@@ -395,8 +387,8 @@ class Alien(pygame.sprite.Sprite):
         self.shoot_cooldown = 400  # Tiempo de enfriamiento entre disparos
         self.last_shot_time = 0
 
-        self.capture_player = CapturePlayer(self) 
-        self.curvas_relativas = Curvas_relativas (self, formation)
+        self.capture_player = CapturePlayer(self, game) 
+        self.curvas_relativas = Curvas_relativas (self, formation, game)
         self.is_capture_formation = False  # Indica si el alienígena está en una formación de captura
         
        
@@ -554,7 +546,7 @@ class Alien(pygame.sprite.Sprite):
         
 
     def control_points(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [188, -10],
             [320, 230],
@@ -563,7 +555,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def control_points_2(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [580, 450],
             [592, 638],
@@ -597,7 +589,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_6(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width + 5, 706]),
             np.array([width - 205, 659]),
@@ -606,7 +598,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_7(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width - 212, 463]),
             np.array([width - 163, 356]),
@@ -615,7 +607,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_8(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return (
             np.array([width - 56, 517]),
             np.array([width - 123, 619]),
@@ -624,7 +616,7 @@ class Alien(pygame.sprite.Sprite):
         )
 
     def control_points_9(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [170, -10],
             [268, 250],
@@ -632,7 +624,7 @@ class Alien(pygame.sprite.Sprite):
             [600, 385]
         ])
     def control_points_10(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [250, -10],
             [320, 250],
@@ -642,7 +634,7 @@ class Alien(pygame.sprite.Sprite):
     
 
     def control_points_11(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [580, 385],
             [590, 650],
@@ -650,7 +642,7 @@ class Alien(pygame.sprite.Sprite):
             [330, 415]
         ]) 
     def control_points_12(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 188, -10],
             [width - 320, 230],
@@ -658,7 +650,7 @@ class Alien(pygame.sprite.Sprite):
             [width - 580, 450]
         ])
     def control_points_13(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 580, 450],
             [width - 592, 638],
@@ -668,7 +660,7 @@ class Alien(pygame.sprite.Sprite):
         ])
         
     def control_points_14(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 250, -10],
             [width - 320, 250],
@@ -679,7 +671,7 @@ class Alien(pygame.sprite.Sprite):
         
         
     def control_points_15(self):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 580, 385],
             [width - 650, 650],
@@ -789,7 +781,7 @@ class Alien(pygame.sprite.Sprite):
 
 
     def attack_control_points_1_1(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [self.x, self.y],  # Comienza desde la posición actual
             [174, 96],  # Un ejemplo de punto intermedio
@@ -798,7 +790,7 @@ class Alien(pygame.sprite.Sprite):
         ])
         
     def attack_control_points_1_2(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [300, 395] ,  # Comienza desde la posición actual
             [480, 455],  # Un ejemplo de punto intermedio
@@ -816,7 +808,7 @@ class Alien(pygame.sprite.Sprite):
         ])   
             
     def attack_control_points_1_4(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(350, 600)
         return np.array([
             [240, -10] ,  # Comienza desde la posición actual
@@ -825,7 +817,7 @@ class Alien(pygame.sprite.Sprite):
             [self.x, self.y]  # Final en una posición aleatoria
         ]) 
     def attack_control_points_2_1(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [self.x, self.y],  # Comienza desde la posición actual
             [width - 174, 96],  # Un ejemplo de punto intermedio
@@ -834,7 +826,7 @@ class Alien(pygame.sprite.Sprite):
         ])
         
     def attack_control_points_2_2(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [width - 300, 395] ,  # Comienza desde la posición actual
             [width - 480, 455],  # Un ejemplo de punto intermedio
@@ -843,7 +835,7 @@ class Alien(pygame.sprite.Sprite):
         ])
         
     def attack_control_points_2_3(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
         return np.array([
             [width - 370, 650],     # Comienza desde la posición actual
@@ -853,7 +845,7 @@ class Alien(pygame.sprite.Sprite):
         ])   
             
     def attack_control_points_2_4(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(350, 600)
         return np.array([
             [width - 240, -10] ,  # Comienza desde la posición actual
@@ -894,7 +886,7 @@ class Alien(pygame.sprite.Sprite):
 
 
     def attack_control_points_2(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
         return np.array([
             [200, 660],  # Comienza desde la posición actual
@@ -904,7 +896,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def attack_control_points_3(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(120, 130)
         return np.array([
             
@@ -925,7 +917,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def attack_control_points_5(self, random_xx, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(150, 160)
         return np.array([
             
@@ -936,7 +928,7 @@ class Alien(pygame.sprite.Sprite):
     ])
 
     def attack_control_points_6(self, random_xx, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
         return np.array([
             
@@ -947,7 +939,7 @@ class Alien(pygame.sprite.Sprite):
         ])
         
     def attack_control_points_7(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(350, 600)
         return np.array([
             
@@ -958,7 +950,7 @@ class Alien(pygame.sprite.Sprite):
         ])       
 
     def attack_control_points_8(self, random_xx, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         return np.array([
             [self.x, self.y],  # Comienza desde la posición actual
             [width - 110 + random_xx, 270],  # Punto intermedio ajustado
@@ -967,7 +959,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def attack_control_points_9(self, random_xx, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(155, 165)
         return np.array([
             [width - 170 + random_xx, 430], 
@@ -977,7 +969,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def attack_control_points_10(self, random_xx, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         
         return np.array([
             [width - 325 + random_xx, 925],
@@ -987,7 +979,7 @@ class Alien(pygame.sprite.Sprite):
         ])    
         
     def attack_control_points_11(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(350, 600)
         return np.array([
             
@@ -999,7 +991,7 @@ class Alien(pygame.sprite.Sprite):
         
         
     def attack_control_points_12(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(160, 170)
         return np.array([
             [265, 660],  # Comienza desde la posición actual
@@ -1009,7 +1001,7 @@ class Alien(pygame.sprite.Sprite):
         ])
 
     def attack_control_points_13(self, offset_x=0):
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         random_x = random.randint(140, 150)
         return np.array([
             [random_x, -10],  # Comienza desde la posición actual
@@ -1031,9 +1023,9 @@ class Alien(pygame.sprite.Sprite):
                     
                     # Decidir si disparo es preciso o con variación
                     if random.random() < 0.5:  # 50% de disparos precisos
-                        laser = AlienLaser(self.rect.center, player_position, error_margin=0)
+                        laser = AlienLaser(self.rect.center, player_position, self.game, error_margin=0)
                     else:  # 50% de disparos con variación
-                        laser = AlienLaser(self.rect.center, player_position, error_margin=75)
+                        laser = AlienLaser(self.rect.center, player_position, self.game, error_margin=75)
                     
                     self.laser_group.add(laser)       
                     
@@ -1390,7 +1382,7 @@ class Alien(pygame.sprite.Sprite):
                 surface.blit(animation_frame, frame_rect)
             
             #Renderizar el texto del mIndex
-            text = self.formation.game.FONT.render(str(self.mIndex), True, self.formation.game.WHITE)
+            text = self.formation.game.FONT.render(str(self.mIndex), True, self.game.settings.WHITE)
             text_rect = text.get_rect(center=(int(self.x), int(self.y) ))
             #surface.blit(text, text_rect)
             
@@ -1446,7 +1438,7 @@ class Formation:
             bezier_id = mIndex
             x, y = self.calculate_target_position(mIndex, alien_type)
             self.initial_target_positions.append((x, y))
-            alien = Alien(mIndex + offset, self, alien_type, bezier_id)
+            alien = Alien(mIndex + offset, self, alien_type, bezier_id, self.game)
             self.aliens.add(alien)
 
     def calculate_target_position(self, mIndex, alien_type):
@@ -1491,7 +1483,7 @@ class Formation:
             retVal_x = (self.grid_size_x + self.grid_size_x * 2 * group) * sign
 
             # Ajustar posiciones para la pantalla
-            screen_x = retVal_x + self.game.WINDOW_WIDTH // 2
+            screen_x = retVal_x + self.game.settings.WIDTH // 2
             screen_y = retVal_y + 180  # Posición objetivo en Y
             
             if alien_type == "blue":
@@ -1501,7 +1493,7 @@ class Formation:
             return int(screen_x), int(screen_y)
         
         # Ajustar posiciones para la pantalla para los alienígenas verdes
-        screen_x = retVal_x + self.game.WINDOW_WIDTH // 2
+        screen_x = retVal_x + self.game.settings.WIDTH // 2
         screen_y = retVal_y  # Posición objetivo en Y para los alienígenas verdes
 
         return int(screen_x), int(screen_y)

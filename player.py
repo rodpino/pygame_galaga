@@ -2,7 +2,8 @@ import pygame
 
 from laser import *
 from debug import *
-#from test_13 import *
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
@@ -11,15 +12,15 @@ class Player(pygame.sprite.Sprite):
         self.lives = 10
         self.laser_group = pygame.sprite.Group()
         self.sprite_sheet = pygame.image.load("asset/Galaga_SpritesSheet.png").convert_alpha()
-        self.nave_1 = self.sprite_sheet.subsurface(109, 1, self.game.SPRITE_SIZE, self.game.SPRITE_SIZE)
-        self.nave_2 = self.sprite_sheet.subsurface(109, 19, self.game.SPRITE_SIZE, self.game.SPRITE_SIZE)
-        self.nave_1 = pygame.transform.scale(self.nave_1, (self.game.PLAYER_SIZE)) 
-        self.nave_2 = pygame.transform.scale(self.nave_2, (self.game.PLAYER_SIZE)) 
+        self.nave_1 = self.sprite_sheet.subsurface(109, 1, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
+        self.nave_2 = self.sprite_sheet.subsurface(109, 19, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
+        self.nave_1 = pygame.transform.scale(self.nave_1, (self.game.settings.PLAYER_SIZE)) 
+        self.nave_2 = pygame.transform.scale(self.nave_2, (self.game.settings.PLAYER_SIZE)) 
         self.index = 0
 
         self.image = self.nave_1
         self.image.set_colorkey((0, 0, 0))
-        self.rect = self.image.get_rect(center=(self.game.WINDOW_WIDTH / 2, self.game.WINDOW_HEIGHT- 95))
+        self.rect = self.image.get_rect(center=(self.game.settings.WIDTH / 2, self.game.settings.HEIGHT- 95))
         self.direction = pygame.math.Vector2()
         self.position = pygame.math.Vector2(self.rect.center)
         self.velocity = 380
@@ -37,7 +38,7 @@ class Player(pygame.sprite.Sprite):
         self.keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks()
         
-        if self.keys[pygame.K_RIGHT] and self.rect.right < self.game.WINDOW_WIDTH:
+        if self.keys[pygame.K_RIGHT] and self.rect.right < self.game.settings.WIDTH:
             self.direction.x = 1
         elif self.keys[pygame.K_LEFT] and self.rect.left > 0:
             self.direction.x = -1
@@ -73,7 +74,7 @@ class Player(pygame.sprite.Sprite):
             self.nave_1 = pygame.transform.scale(self.nave_1, (25 , 25))
             
             x = 10 + i * (self.nave_1.get_width() + 5)
-            y = self.game.WINDOW_HEIGHT - 30
+            y = self.game.settings.HEIGHT - 30
             self.screen.blit(self.nave_1, (x, y))
 
     def update(self, delta_time):

@@ -1,8 +1,9 @@
 import pygame
 import random
 
+
 class Background:
-    def __init__(self, game ):
+    def __init__(self, game):
         self.game = game
         self.screen = pygame.display.get_surface()
         self.scroll_speed = 0.5
@@ -18,8 +19,8 @@ class Background:
     def generate_rects(self, num_rects):
         rects = []
         for _ in range(num_rects):
-            x = random.randint(0, self.game.WINDOW_WIDTH - 4)
-            y = random.randint(0, self.game.WINDOW_HEIGHT - 4)
+            x = random.randint(0, self.game.settings.WIDTH - 4)
+            y = random.randint(0, self.game.settings.HEIGHT - 4)
             color = random.choice(self.colors)
             rects.append((pygame.Rect(x, y, 2, 1), color))
         return rects
@@ -30,7 +31,7 @@ class Background:
 
     def update(self, delta_time):
         self.background_y += self.scroll_speed
-        if self.background_y >= self.game.WINDOW_HEIGHT:
+        if self.background_y >= self.game.settings.HEIGHT:
             self.background_y = 0
 
         self.toggle_timer += delta_time * 200
@@ -43,11 +44,11 @@ class Background:
 
         if self.show_first_half:
             for rect, color in self.first_half:
-                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.WINDOW_HEIGHT))
+                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.settings.HEIGHT))
                 self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y))
         else:
             for rect, color in self.second_half:
-                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.WINDOW_HEIGHT))
+                self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y - self.game.settings.HEIGHT))
                 self.screen.blit(self.draw_rect(rect, color), (rect.x, rect.y + self.background_y))
 
     def draw_rect(self, rect, color):

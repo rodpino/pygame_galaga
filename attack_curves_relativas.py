@@ -4,17 +4,15 @@ import numpy as np
 import random
 
 class Curvas_relativas:
-    """ curvas de ataque de boss_green y alien red """
-    
-    
-    def __init__(self, alien, formation):
+    """ curvas de ataque de boss_green y alien red """ 
+    def __init__(self, alien, formation, game):
         self.alien = alien
         self.formation = formation
+        self.game = game
         self.attack_curves = []
         self.performing_capture = False
         self.capture_start_time = None
-        self.WINDOW_WIDTH = 650
-        self.WINDOW_HEIGHT = 950
+      
         
          
     def define_attack_curves_relative(self, offset_x=-50, offset_y=0):
@@ -22,7 +20,7 @@ class Curvas_relativas:
         random_x = random.randint(50, 170)
         player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
         relative_player_x = player_x - self.alien.x
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         base_curve_1 = np.array([
             [0, 0],  # Comienza desde la posición actual
             [-214, 270],  # Punto intermedio ajustado
@@ -78,7 +76,7 @@ class Curvas_relativas:
         random_x = random.randint(-150, -70)
         player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
         relative_player_x = player_x - self.alien.x
-        width = self.formation.game.WINDOW_WIDTH
+        width = self.formation.game.settings.WIDTH
         base_curve_1 = np.array([
             [0, 0],  # Comienza desde la posición actual
             [214, 270],  # Punto intermedio ajustado

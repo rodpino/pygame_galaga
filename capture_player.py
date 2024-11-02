@@ -2,14 +2,15 @@
 import numpy as np
 import random
 
+
 class CapturePlayer:
-    def __init__(self, alien):
+    def __init__(self, alien, game):
         self.alien = alien
+        self.game = game
         self.attack_curves = []
         self.performing_capture = False
         self.capture_start_time = None
-        self.WINDOW_WIDTH = 650
-        self.WINDOW_HEIGHT = 950
+       
 
     def define_capture_curves_1(self, offset_x=0):
         random_x = random.randint(-80, 80)
@@ -50,7 +51,7 @@ class CapturePlayer:
         
     def capture_control_points_2(self, random_x, offset_x=0):
         return np.array([
-            [160 + random_x , 680],
+            [160 + random_x, 680],
             [165 + random_x, 655],
             [180 + random_x, 790],
             [220 + random_x, 1000]
@@ -67,18 +68,18 @@ class CapturePlayer:
     # Define capture_control_points_4, capture_control_points_5, and capture_control_points_6 similarly
 
     def capture_control_points_4(self, random_x, offset_x=0):
-        width = self.WINDOW_WIDTH
+        width = self.game.settings.WIDTH
         return np.array([
             [self.alien.x, self.alien.y],
             [width - 175 + random_x, 123],
             [width - 97 + random_x, 250],
-            [width - 160 + random_x, 680] # Final en una posición aleatoria
+            [width - 160 + random_x, 680]  # Final en una posición aleatoria
         ])
 
-    def capture_control_points_5(self,random_x, offset_x=0):
-            width = self.WINDOW_WIDTH
+    def capture_control_points_5(self, random_x, offset_x=0):
+        width = self.game.settings.WIDTH
             
-            return np.array([
+        return np.array([
             [width - 160 + random_x, 680],
             [width - 165 + random_x, 655],
             [width - 180 + random_x, 790],
@@ -86,7 +87,7 @@ class CapturePlayer:
             ])
 
     def capture_control_points_6(self, offset_x=0):
-        width = self.WINDOW_WIDTH
+        width = self.game.settings.WIDTH
         random_x = random.randint(135, 145)
         return np.array([
             [width - 205, -10],

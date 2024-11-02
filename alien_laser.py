@@ -1,17 +1,15 @@
 import pygame
 import random
-
+from settings import *
 
 class AlienLaser(pygame.sprite.Sprite):
-    def __init__(self, alien_position, player_position, error_margin=225):
+    def __init__(self, alien_position, player_position, game, error_margin=225):
         super().__init__()
-        self.SPRITE_SIZE = 16
-        self.WINDOW_WIDTH = 650
-        self.WINDOW_HEIGHT = 950
+        self.game = game
         self.position = pygame.math.Vector2(alien_position)
         self.screen = pygame.display.get_surface()
         self.sprite_sheet = pygame.image.load("asset\Galaga_SpritesSheet.png").convert_alpha()
-        self.image = self.sprite_sheet.subsurface(307, 136, self.SPRITE_SIZE, self.SPRITE_SIZE)
+        self.image = self.sprite_sheet.subsurface(307, 136, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
         self.image = pygame.transform.scale(self.image, (30, 30)) 
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect(center=alien_position)
@@ -33,5 +31,5 @@ class AlienLaser(pygame.sprite.Sprite):
     def update(self, delta_time):
         self.position += self.direction * self.velocity * delta_time
         self.rect.center = self.position
-        if self.rect.y > self.WINDOW_HEIGHT or self.rect.y < 0 or self.rect.x > self.WINDOW_WIDTH  or self.rect.x < 0:
+        if self.rect.y > self.game.settings.HEIGHT or self.rect.y < 0 or self.rect.x > self.game.settings.WIDTH or self.rect.x < 0:
             self.kill()
