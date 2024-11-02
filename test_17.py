@@ -7,14 +7,12 @@ import numpy as np
 import random
 import time
 from settings import Settings
-from entities.player import Player
-from entities.laser import Laser
-from entities.explosion import Explosion
+from entities import Player, Laser, Explosion, CapturePlayer, Curvas_relativas, Background, AlienLaser
 from debug import debug_2
-from entities.alien_laser import AlienLaser
-from entities.capture_player import CapturePlayer
-from entities.attack_curves_relativas import *
-from entities.background import Background
+
+
+
+
 
 # test github 2.1
 
