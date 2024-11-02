@@ -7,14 +7,14 @@ import numpy as np
 import random
 import time
 from settings import Settings
-from player import *
-from laser import *
-from explosion import *
+from entities.player import Player
+from entities.laser import Laser
+from entities.explosion import Explosion
 from debug import debug_2
-from alien_laser import *
-from capture_player import *
-from attack_curves_relativas import *
-from background import *
+from entities.alien_laser import AlienLaser
+from entities.capture_player import CapturePlayer
+from entities.attack_curves_relativas import *
+from entities.background import Background
 
 # test github 2.1
 
@@ -32,18 +32,16 @@ class Game:
         pygame.display.set_caption("Pygame Galaga")
         self.sprite_explotion_coord = [(289, 1, 32, 32), (323, 1, 32, 32), (357, 1, 32, 32), (391, 1, 32, 32), (425, 1, 32, 32)]
 
-        
-        
         # Puntaje
         self.score = 0  # Iniciar el puntaje en 0
         self.high_score = self.load_high_score()
         
         # Fuente para mostrar el puntaje
-        self.FONT_score = pygame.font.Font('asset\emulogic\emulogic.ttf', 20)
+        self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
 
         # Fuente para mostrar el mIndex
         self.FONT = pygame.font.SysFont(None, 30)
-
+        self.font = pygame.font.Font("asset/fonts/emulogic.ttf", 8)
         # Cargar la hoja de sprites con la ruta actualizada
         self.SPRITE_SHEET = pygame.image.load(r"E:\Python Pygame\Python Test_6\asset\Galaga_SpritesSheet.png")
         
@@ -275,7 +273,7 @@ class Game:
                 pygame.display.update()
            
            
-            fps_text = font.render(f"FPS: {int(fps)}", True, (255, 255, 255))  # Blanco
+            fps_text = self.font.render(f"FPS: {int(fps)}", True, (255, 255, 255))  # Blanco
             self.SCREEN.blit(fps_text, (10, 100))  # Posición en la esquina superior izquierda
 
             

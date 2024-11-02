@@ -1,7 +1,7 @@
 import pygame
 pygame.init ()
 
-font = pygame.font.Font("asset/emulogic/emulogic.ttf", 8)
+font = pygame.font.Font("asset/fonts/emulogic.ttf", 8)
 
 def debug (info, y = 180, x = 20):
     screen = pygame.display.get_surface ()

@@ -4,9 +4,9 @@ import os
 import numpy as np
 import random
 import time
-from player import *
-from laser import *
-from explosion import *
+from entities.player import *
+from entities.laser import *
+from entities.explosion import *
 from settings import Settings
 
 # Clase Game
