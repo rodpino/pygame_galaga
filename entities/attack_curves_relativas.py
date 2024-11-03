@@ -18,7 +18,7 @@ class Curvas_relativas:
     def define_attack_curves_relative(self, offset_x=-50, offset_y=0):
     # Curva base en coordenadas relativas
         
-        player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
+        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
         relative_player_x = player_x - self.alien.x
 
         base_curve_1 = np.array([
@@ -70,7 +70,7 @@ class Curvas_relativas:
     def define_attack_curves_relative_2(self, offset_x=0, offset_y=0):
         # Curva base en coordenadas relativas
 
-        player_x = self.formation.game.player_sprite.rect.centerx  # Obtener la posición en X del jugador
+        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
         relative_player_x = player_x - self.alien.x
         width = self.formation.game.settings.WIDTH
         base_curve_1 = np.array([

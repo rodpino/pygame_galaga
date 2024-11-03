@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.screen = pygame.display.get_surface()
-        self.lives = 10
+        self.lives = 3
         self.laser_group = pygame.sprite.Group()
         self.sprite_sheet = pygame.image.load("asset/Galaga_SpritesSheet.png").convert_alpha()
         self.nave_1 = self.sprite_sheet.subsurface(109, 1, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
@@ -64,12 +64,8 @@ class Player(pygame.sprite.Sprite):
     
     
     
-    def draw(self):
-        for laser in self.laser_group:
-            laser.draw()
-            
-        
-        
+    def draw_life_player(self):
+        """dibuja vidas del player"""
         for i in range(self.lives):
             self.nave_1 = pygame.transform.scale(self.nave_1, (25 , 25))
             
