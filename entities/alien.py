@@ -4,7 +4,7 @@ import random
 from entities.capture_player import CapturePlayer
 from entities.attack_curves_relativas import Curvas_relativas
 from entities.alien_laser import AlienLaser
-
+from settings import Settings
 
 class Alien(pygame.sprite.Sprite):
     # Variables de clase para la animación
@@ -131,47 +131,34 @@ class Alien(pygame.sprite.Sprite):
 
     def load_animation_frames(self):
         """Carga los frames de animación de los sprites."""
-        if not Alien.animation_frames_by_type[self.alien_type]:  
+        if not Alien.animation_frames_by_type[self.alien_type]:
             if self.alien_type == "red":
                 Alien.animation_frames_by_type["red"] = [
-                    self.game.resources.get_sprite((109, 73, 16, 16)),
-                    self.game.resources.get_sprite((127, 73, 16, 16))
+                    self.game.resources.get_sprite((109, 73, 16, 16), (self.game.settings.ALIENS_SIZE)),
+                    self.game.resources.get_sprite((127, 73, 16, 16), (self.game.settings.ALIENS_SIZE))
                 ]
             elif self.alien_type == "blue":
                 Alien.animation_frames_by_type["blue"] = [
-                    self.game.resources.get_sprite((109, 91, 16, 16)),
-                    self.game.resources.get_sprite((127, 91, 16, 16))
+                    self.game.resources.get_sprite((109, 91, 16, 16), (self.game.settings.ALIENS_SIZE)),
+                    self.game.resources.get_sprite((127, 91, 16, 16), (self.game.settings.ALIENS_SIZE))
                 ]
             elif self.alien_type == "boss_green":
                 Alien.animation_frames_by_type["boss_green"] = [
-                    self.game.resources.get_sprite((109, 37, 16, 16)),
-                    self.game.resources.get_sprite((127, 37, 16, 16))
+                    self.game.resources.get_sprite((109, 37, 16, 16), (self.game.settings.ALIENS_SIZE)),
+                    self.game.resources.get_sprite((127, 37, 16, 16), (self.game.settings.ALIENS_SIZE))
                 ]
                 Alien.animation_frames_by_type["boss_blue"] = [
-                    self.game.resources.get_sprite((109, 55, 16, 16)),
-                    self.game.resources.get_sprite((127, 55, 16, 16))
+                    self.game.resources.get_sprite((109, 55, 16, 16), (self.game.settings.ALIENS_SIZE)),
+                    self.game.resources.get_sprite((127, 55, 16, 16), (self.game.settings.ALIENS_SIZE))
                 ]
 
         if not self.capture_animation_frames:
             self.capture_animation_frames = [
-            self.game.resources.get_sprite((289, 36, 48, 80)),
-            self.game.resources.get_sprite((339, 36, 48, 80)),
-            self.game.resources.get_sprite((389, 36, 48, 80))
+            self.game.resources.get_sprite((289, 36, 48, 80), self.game.settings.CAPTURE_SIZE),
+            self.game.resources.get_sprite((339, 36, 48, 80), self.game.settings.CAPTURE_SIZE),
+            self.game.resources.get_sprite((389, 36, 48, 80), self.game.settings.CAPTURE_SIZE)
         ]
         
-            scaled_frames = []
-            for frame in self.capture_animation_frames:
-                # Obtener el tamaño original
-                original_size = frame.get_size()
-                # Calcular el nuevo tamaño usando el factor de escala
-                new_size = (int(original_size[0] * self.scale_factor_x), int(original_size[1] * self.scale_factor_y))
-                # Escalar el frame
-                scaled_frame = pygame.transform.scale(frame, new_size)
-                # Agregar el frame escalado a la lista
-                scaled_frames.append(scaled_frame)
-
-            # Reemplazar la lista original con los frames escalados
-            self.capture_animation_frames = scaled_frames 
             
             for key in Alien.animation_frames_by_type:
                 frames = Alien.animation_frames_by_type[key]

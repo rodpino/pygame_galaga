@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.screen = pygame.display.get_surface()
-        self.lives = 3
+        self.lives = 1
         self.laser_group = pygame.sprite.Group()
         self.sprite_sheet = pygame.image.load("asset/Galaga_SpritesSheet.png").convert_alpha()
         self.nave_1 = self.sprite_sheet.subsurface(109, 1, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
@@ -72,7 +72,10 @@ class Player(pygame.sprite.Sprite):
             x = 10 + i * (self.nave_1.get_width() + 5)
             y = self.game.settings.HEIGHT - 30
             self.screen.blit(self.nave_1, (x, y))
-
+            
+        if self.lives == 0 or len(self.game.formation.aliens) == 0:
+            self.game.resources.game_over()  # Llama a la función para mostrar el texto "Game Over"
+                    
     def update(self, delta_time):
         self.player_input()
         self.position.x += self.direction.x * self.velocity * delta_time

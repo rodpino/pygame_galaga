@@ -1,23 +1,30 @@
 import pygame
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, sprite_coords, explosion_size, frame_duration=0.05, color_key=(0, 0, 0)):
+    def __init__(self, game):
         super().__init__()
+        self.game = game
         self.index = 0
-        self.frame_duration = frame_duration  # Duración de cada fotograma en segundos
+        self.frame_duration = 0.05  # Duración de cada fotograma en segundos
         self.time_accumulator = 0  # Acumulador de tiempo para delta_time
         self.screen = pygame.display.get_surface()
-        self.sprite_sheet = sprite_sheet
-        self.explosion_size = explosion_size
+        self.explosion_size = (70, 70)
 
-        # Cargar y escalar todos los sprites en una lista con un bucle
-        self.lista_explosion = []
-        for coord in sprite_coords:
-            sprite = self.sprite_sheet.subsurface(coord)
-            sprite = pygame.transform.scale(sprite, self.explosion_size)
-            sprite.set_colorkey(color_key)
-            self.lista_explosion.append(sprite)
+        sprite_coordinates = [
+                                (289, 1, 32, 32),
+                                (323, 1, 32, 32),
+                                (357, 1, 32, 32),
+                                (399, 1, 32, 32),
+                                (425, 1, 32, 32)
+                            ]
 
+    # Usamos una comprensión de lista para llamar a get_sprite con cada coordenada
+        self.lista_explosion = [
+            self.game.resources.get_sprite(coord, self.explosion_size) for coord in sprite_coordinates
+            ]
+
+
+        
         self.image = self.lista_explosion[self.index]
         self.rect = self.image.get_rect()
         self.active = False  # Añadir estado activo para controlar la animación

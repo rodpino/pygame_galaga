@@ -27,14 +27,14 @@ class Resources:
         self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
         
 
-    def get_sprite(self, coordinates):
+    def get_sprite(self, coordinates, sprite_size):
         """Extrae el sprite de la hoja de sprites dado un rectángulo de coordenadas."""
         x, y, width, height = coordinates
         sprite = pygame.Surface((width, height), pygame.SRCALPHA)
         sprite.blit(self.SPRITE_SHEET, (0, 0), (x, y, width, height))
         sprite.set_colorkey((0, 0, 0))
         sprite = sprite.convert_alpha()
-        return pygame.transform.scale(sprite, (40, 40))
+        return pygame.transform.scale(sprite, (sprite_size))
         
     def check_for_collision(self):
         for laser_sprite in self.game.player_group.sprite.laser_group:
@@ -69,7 +69,6 @@ class Resources:
                     alien.kill()  
                 
                 explosion_position = alien.rect.center
-                self.game.explosion
                 self.game.explosion.start_explosion(explosion_position)
                 self.game.explosion_group.add(self.game.explosion)
                 
@@ -82,21 +81,19 @@ class Resources:
             if pygame.sprite.spritecollide(self.game.player, alien_sprite.laser_group, True, pygame.sprite.collide_mask):
                 # Reducir una vida
                 self.game.player.lives -= 1
-                # Verificar si el jugador ha perdido todas las vidas
-                # if self.player.lives <= 0:
-                #     self.game_over()
-                    
+                if self.game.player.lives <= 0:
+                    self.game.player.lives = 0
+                                   
                     
             if pygame.sprite.spritecollide(self.game.player, self.game.formation.aliens, True, pygame.sprite.collide_mask):
                 # Reducir una vida
                 self.game.player.lives -= 1
                 # Verificar si el jugador ha perdido todas las vidas
-                # if self.player.lives <= 0:
-                #     self.game_over() 
+                if self.game.player.lives <= 0:
+                    self.game.player.lives = 0
         
         
-        if len(self.game.formation.aliens) == 0:
-            self.game_over()
+        
             
     def load_high_score(self):
         """Carga el high score desde un archivo, si el archivo no existe lo inicializa a 0."""
@@ -118,14 +115,14 @@ class Resources:
         if self.score > self.high_score:
             self.high_score = self.score
     
-    def draw_Game_Over(self):
+    def game_over(self):
         
         game_over_text = self.FONT_score.render("Game Over", True, self.game.settings.RED)
         
         centered_text_whidt = game_over_text.get_width()
         centered_text = (self.game.settings.WIDTH/2) - (centered_text_whidt // 2)
-        self.screen.blit(game_over_text, (centered_text, 545))
-        pygame.display.update()
+        self.screen.blit(game_over_text, (centered_text, 500))
+        
         
     def draw_score(self):
         # Dibuja el puntaje actual en la pantalla.

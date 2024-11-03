@@ -11,9 +11,10 @@ class Settings():
         self.INICIO_SPRITE_X = 1
         self.INICIO_SPRITE_Y = 1
         self.angulo_rotacion = 0
-        self.ALIENS_SIZE = (45, 45)
+        self.ALIENS_SIZE = (40, 40)
         self.PLAYER_SIZE = (45, 45)
         self.EXPLOSION_SIZE = (50, 50)
+        self.CAPTURE_SIZE = (40, 40)
         # Colores
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)

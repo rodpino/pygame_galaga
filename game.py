@@ -4,20 +4,16 @@ import sys
 import time
 import os
 
-#from formation import Formation
 from settings import Settings
 from entities.player import Player
 from entities.laser import Laser
 from entities.explosion import Explosion
-from entities.capture_player import CapturePlayer
 from entities.attack_curves_relativas import Curvas_relativas
 from entities.background import Background
-from entities.alien_laser import AlienLaser
 from entities.formation import Formation
 from entities.alien import Alien
 from utils.resources import Resources
-#from utils.helpers import load_high_score, save_high_score, check_high_score
-#from utils.debug import debug
+
 
 
 class Game():
@@ -34,11 +30,10 @@ class Game():
         self.background = Background(self)
         
         self.formation = Formation(self)
-        self.sprite_explotion_coord = [(289, 1, 32, 32), (323, 1, 32, 32), (357, 1, 32, 32), (391, 1, 32, 32), (425, 1, 32, 32)]
         self.explosion_size = (70, 70)
-        self.explosion = Explosion(self.resources.SPRITE_SHEET, self.sprite_explotion_coord, self.explosion_size)
+        self.explosion = Explosion(self)
         self.explosion_group = pygame.sprite.Group()
-        self.explosion_group.add(self.explosion)
+        #self.explosion_group.add(self.explosion)
         # Player Setup
         self.player = Player(self)
         self.player_group = pygame.sprite.GroupSingle()
@@ -73,7 +68,7 @@ class Game():
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.save_high_score()
+                self.resources.save_high_score()
                 self.running = False
 
     def update_game_state(self, delta_time):
@@ -99,10 +94,8 @@ class Game():
         self.resources.show_fps(fps)
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.draw(self.screen)
-        if self.player.lives == 0:
-            self.resources.draw_Game_Over()  # Llama a la función para mostrar el texto "Game Over"
-            pygame.display.update()
         
+        #self.resources.debug(len(self.explosion_group))
         pygame.display.flip()
 
     def run(self):
