@@ -38,6 +38,9 @@ class Formation:
         self.attack_formations = []
         self.define_attack_formations()
         self.allowed_attack_types = ['red', 'blue', 'boss_green', 'boss_green, red, red']
+        
+        
+        self.capture_frame_position = None
         #self.curvas_relativas = Curvas_relativas (self)
     def create_formation(self):
         """Crear alienígenas y calcular sus posiciones objetivo."""
@@ -452,7 +455,7 @@ class Formation:
             if alien.alien_type == alien_type and alien.bezier_id in bezier_id:
                 alien.time_since_start = 0.0
 
-    def draw(self, surface):
+    def draw(self, surface, delta_time):
         for alien in self.aliens:
             alien.draw(surface)
             

@@ -105,7 +105,7 @@ class Alien(pygame.sprite.Sprite):
         self.capture_player = CapturePlayer(self, game) 
         self.curvas_relativas = Curvas_relativas (self, formation, game)
         self.is_capture_formation = False  # Indica si el alienígena está en una formación de captura
-        
+        self.capture_frame_position = None
        
         
         
@@ -990,8 +990,6 @@ class Alien(pygame.sprite.Sprite):
         
         self.shoot(delta_time)                
                 
-    
-
     def draw(self, surface):
         if self.active or self.arrived or self.attack_mode or self.pausing:
             
@@ -1008,12 +1006,14 @@ class Alien(pygame.sprite.Sprite):
             surface.blit(self.rotated_image, rect)
             
             if self.pausing and self.capture_animation_frame:
+                
+                
                 # Dibujar la animación de captura en la parte inferior central del alienígena
                 animation_frame = self.capture_animation_frame
                 frame_rect = animation_frame.get_rect(midtop=rect.midbottom)
                 
-                #surface.blit(animation_frame, frame_rect)
-            
+                # surface.blit(animation_frame, frame_rect)
+                self.capture_frame_position = frame_rect.center
             #Renderizar el texto del mIndex
             text = self.formation.game.FONT.render(str(self.mIndex), True, self.game.settings.WHITE)
             text_rect = text.get_rect(center=(int(self.x), int(self.y) ))

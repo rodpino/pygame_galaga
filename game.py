@@ -41,7 +41,8 @@ class Game():
         self.player_group.add(self.player)
         self.hit_count = 0
         
-        self.capture_light = CaptureLight(self, 200, 600)
+        self.capture_light = CaptureLight(self, 400, 600)
+        self.capture_light_group = pygame.sprite.Group(self.capture_light)
         # Puntaje
         self.score = 0  # Iniciar el puntaje en 0
         self.high_score = self.resources.load_high_score()
@@ -56,6 +57,17 @@ class Game():
         self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
         self.clock = pygame.time.Clock()
     
+    def draw_capture(self, delta_time):
+        self.capture_light.update(delta_time)
+        CaptureLight.sprite_animation(delta_time)
+        print("capture ???")
+        # Actualizar la imagen del sprite usando el índice global de animación
+        
+    
+        # Actualiza la posición del sprite en la pantalla
+        self.rect = self.formation.aliens.x, self.formation.alien.y
+        self.screen.blit(self.capture_light.image, self.rect)
+        
     def calculate_delta_time(self) -> float:
         """Calcula y devuelve el delta_time usando time.time()"""
 
@@ -84,20 +96,20 @@ class Game():
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.update(delta_time)
         Alien.sprite_animation(delta_time)
-        self.capture_light.update()
-    def render(self, fps):
+        self.capture_light_group.update(delta_time)
+    def render(self, fps, delta_time):
         self.screen.fill(self.settings.BLACK)
-        # self.background.draw()
-        self.formation.draw(self.screen)
-        # self.player_group.draw(self.screen)
-        # self.player.laser_group.draw(self.screen)
-        # self.resources.draw_score()
-        # self.player.draw_life_player()
-        # self.explosion_group.draw(self.screen)
+        self.background.draw()
+        self.formation.draw(self.screen, delta_time)
+        self.player_group.draw(self.screen)
+        self.player.laser_group.draw(self.screen)
+        self.resources.draw_score()
+        self.player.draw_life_player()
+        self.explosion_group.draw(self.screen)
         self.resources.show_fps(fps)
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.draw(self.screen)
-        #self.capture_light.draw()
+        self.capture_light_group.draw(self.screen)
         #self.resources.draw_bezier_path(self.screen)
         #self.resources.debug(len(self.explosion_group))
         pygame.display.flip()
@@ -114,7 +126,7 @@ class Game():
             self.handle_events()
             self.update_game_state(delta_time)
             
-            self.render(fps)
+            self.render(fps, delta_time)
             
         # Salir de Pygame
         pygame.quit()

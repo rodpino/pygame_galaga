@@ -1,7 +1,11 @@
 import pygame
 
-
 class CaptureLight(pygame.sprite.Sprite):
+    animation_frames = []  # Asegúrate de que esta lista esté poblada antes de animar
+    global_animation_timer = 0.0
+    global_animation_interval = 0.4  # Intervalo entre frames en segundos
+    global_animation_index = 0
+
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
@@ -10,47 +14,43 @@ class CaptureLight(pygame.sprite.Sprite):
             self.game.resources.get_sprite((339, 36, 48, 80), self.game.settings.CAPTURE_SIZE),
             self.game.resources.get_sprite((389, 36, 48, 80), self.game.settings.CAPTURE_SIZE)
         ]
-        self.image = self.capture_animation_frames[0]
+        self.image = self.capture_animation_frames[1]
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        print(len(self.capture_animation_frames))
+        self.rect.center = (300, 600)
+        
+        # Actualizar la clase con los frames de animación
+        CaptureLight.animation_frames = self.capture_animation_frames
+        
         # Variables de animación
-        self.is_capturing = False  # Controla si está en proceso de captura
+        self.is_capturing = True  # Activar la captura desde el inicio
         self.capture_start_time = None  # Tiempo en que comienza la captura
         self.frame_index = 0  # Índice del frame de animación actual
 
-    def start_capture(self):
-        """Inicia la animación de captura."""
-        if not self.is_capturing:  # Solo inicia si no está ya en captura
-            self.is_capturing = True
-            self.capture_start_time = pygame.time.get_ticks()
+    @classmethod
+    def sprite_animation(cls, delta_time):
+        cls.global_animation_timer += delta_time
+        max_index = len(cls.animation_frames)  # Obtener la longitud de animation_frames
+        
+        if max_index > 0 and cls.global_animation_timer >= cls.global_animation_interval:
+            cls.global_animation_timer -= cls.global_animation_interval
+            cls.global_animation_index = (cls.global_animation_index + 1) % max_index
 
-    def update(self):
-        """Actualiza la animación y verifica colisiones."""
-        # Verificar colisión con el jugador
-        #if self.rect.colliderect(self.game.player.rect):
-        self.start_capture()
-
-        # Reproducir animación si está en captura
-        #if self.is_capturing:
-        self.animate_capture()
-        print(self.capture_animation_frames)
-    def animate_capture(self):
-        """Maneja la animación de captura."""
-        if self.capture_start_time is not None:  # Asegurarse de que capture_start_time esté configurado
-            elapsed_time = (pygame.time.get_ticks() - self.capture_start_time) / 1000.0
-            print (elapsed_time)
-            if elapsed_time < 5:  # Limita la animación a 5 segundos
-                # Cambiar de frame cada 500 ms
-                self.frame_index = int((elapsed_time * 1000) // 500) % len(self.capture_animation_frames)
-                self.image = self.capture_animation_frames[self.frame_index]
-                print(self.frame_index)
-            else:
-                # Detener la animación después de 5 segundos
-                self.is_capturing = False
-                self.capture_start_time = None
-
+    def update(self, delta_time):
+        # Llamar al método de animación de clase para actualizar el índice
+        CaptureLight.sprite_animation(delta_time)
+        position = self.game.formation.aliens.capture_frame_position
+        # Actualizar la imagen del sprite usando el índice global de animación
+        frames = self.capture_animation_frames
+        if len(frames) > 0:  # Verificar que haya frames disponibles
+            self.image = frames[self.global_animation_index]
+    
         # Actualiza la posición del sprite en la pantalla
-        self.rect.midbottom = (self.rect.x, self.rect.y)
-        self.game.screen.blit(self.image, self.rect)
-        print ("gjhghfjg")
+        self.rect = self.image.get_rect(center=position)
+        self.image = pygame.image.load("asset/Galaga_SpritesSheet.png")
+        
+     
+        
+       
+
+    
+        
