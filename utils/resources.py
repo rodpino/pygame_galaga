@@ -173,4 +173,73 @@ class Resources:
         fps_text = self.font.render(f"FPS: {int(self.fps)}", True, (255, 255, 255))  # Blanco
         self.screen.blit(fps_text, (10, 100))  # Posición en la esquina superior izquierda
 
+    # def draw_bezier_path(self, surface):
+    # # Número de puntos para la línea de puntos
+    #     num_points = 50
+    #     curve_colors = [(255, 255, 255), (0, 255, 0), (0, 0, 255), (255, 0, 0)]  # Colores para cada curva
+    #     control_colors = [(255, 0, 0), (0, 255, 255), (255, 0, 255), (0, 255, 0)]  # Colores para los puntos de control
+    #     radius = 3  # Tamaño de los puntos de control
+
+        
+    #     if self.game.formation.attack_mode:
+    #         # Número de puntos para la línea de puntos
+    #         num_points = 50  # Aumenta o disminuye el número de puntos para ajustar la calidad del dibujo
+    #         curve_color = (255, 255, 255)  # Color de la curva
+    #         radius = 2  # Tamaño de los puntos de control (opcional)
+
+    #         # Asegurarse de que haya curvas de ataque definidas
+    #         if len(self.attack_curves) > 0:
+    #             for curve_index, curve in enumerate(self.attack_curves):
+    #                 previous_point = None  # Almacena el punto anterior para dibujar líneas entre puntos
+
+    #                 # Dibujar la línea punteada de la curva
+    #                 for i in range(num_points + 1):
+    #                     t = i / num_points  # Valor de t entre 0 y 1
+    #                     point = self.bezier_curve(curve, t)  # Calcular el punto en la curva
+    #                     x, y = int(point[0]), int(point[1])  # Convertir las coordenadas a enteros
+
+    #                     # Dibujar un pequeño círculo en cada punto de la curva (para hacerla punteada)
+    #                     if previous_point:
+    #                         if i % 2 == 0:  # Hacer líneas punteadas (dibujar en cada 2do punto)
+    #                             pygame.draw.line(surface, curve_color, previous_point, (x, y), 1)
+
+    #                     previous_point = (x, y)  # Actualizar el punto anterior para la siguiente línea
+
+    #                 # Opcional: dibujar los puntos de control
+    #                 for control_point in curve:
+    #                     control_x, control_y = int(control_point[0]), int(control_point[1])
+
+    #                     # Dibujar un círculo para el punto de control (opcional)
+    #                     pygame.draw.circle(surface, curve_color, (control_x, control_y), radius)
+
             
+        
+        
+    #     if len(self.game.formation.aliens.curves) > 0:
+    #         for curve_index, curve in enumerate(self.curves):
+    #             # Escoger el color de la curva y de los puntos de control
+    #             curve_color = curve_colors[curve_index % len(curve_colors)]
+    #             control_color = control_colors[curve_index % len(control_colors)]
+
+    #             # Dibujar la línea punteada de la curva
+    #             for i in range(num_points + 1):
+    #                 t = i / num_points  # Valor de t entre 0 y 1
+    #                 point = self.bezier_curve(curve, t)  # Calcular el punto en la curva
+    #                 x, y = int(point[0]), int(point[1])  # Convertir las coordenadas a enteros
+
+    #                 # Dibujar un círculo en cada punto de la curva
+    #                 #pygame.draw.circle(surface, curve_color, (x, y), radius - 1)
+
+    #             # Dibujar los puntos de control con sus coordenadas
+    #             for control_point in curve:
+    #                 control_x, control_y = int(control_point[0]), int(control_point[1])
+
+    #                 # Dibujar un círculo para el punto de control
+    #                 #pygame.draw.circle(surface, control_color, (control_x, control_y), radius + 2)
+
+    #                 # Dibujar el valor (x, y) del punto de control sobre el punto
+    #                 text_surface = self.formation.game.FONT.render(f"({control_x}, {control_y})", True, control_color)
+    #                 surface.blit(text_surface, (control_x + 5, control_y + 5))  # Colocar el texto cerca del punto de control
+
+
+           

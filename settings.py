@@ -14,7 +14,7 @@ class Settings():
         self.ALIENS_SIZE = (40, 40)
         self.PLAYER_SIZE = (45, 45)
         self.EXPLOSION_SIZE = (50, 50)
-        self.CAPTURE_SIZE = (40, 40)
+        self.CAPTURE_SIZE = (60, 190)
         # Colores
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
