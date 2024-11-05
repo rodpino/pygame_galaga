@@ -1,6 +1,7 @@
 import pygame
 import os
 from entities.player import Player
+from entities.explosion import Explosion
 
 
 class Resources:
@@ -38,73 +39,66 @@ class Resources:
         return pygame.transform.scale(sprite, (sprite_size))
         
     def check_for_collision(self):
-        
-        for player in self.game.player_group:
-            for laser_sprite in player.game.player.laser_group:
-                # Verificar colisiones usando pygame.sprite.collide_mask
-                collisions = pygame.sprite.spritecollide(laser_sprite, self.game.formation.aliens, False, pygame.sprite.collide_mask)
+    # Iterar sobre cada láser en el grupo global de láseres de jugadores
+        for laser_sprite in self.game.player_lasers:
+            if not laser_sprite.alive():
+                continue  # Saltar este láser si ya ha sido eliminado
 
-                for alien in collisions:
-                    alien.on_laser_hit()  # Llamar al método para manejar el impacto del láser
-                    alien_type = alien.alien_type
-                    
-                    # Manejar las colisiones
-                    if alien.alien_type == "boss_blue" and alien.hit_count == 2:
-                        # Si es el segundo impacto, eliminar el alien
-                        alien.kill()
-                
-                    # Asignar puntos según el color del alien
-                    if alien_type == "blue":
-                        if alien.attack_mode:
-                            self.score += 100
-                        else:
-                            self.score += 50
-                        alien.kill()
-                        
-                        
-                    elif alien_type == "red":
-                        if alien.attack_mode:
-                            self.score += 160
-                        else:
-                            self.score += 80
-                        alien.kill()  
-                    
-                    explosion_position = alien.rect.center
-                    self.game.explosion.start_explosion(explosion_position)
-                    self.game.explosion_group.add(self.game.explosion)
-                    
-                # Eliminar el láser después de cada colisión 
-                    laser_sprite.kill()
-                
-        
+            # Verificar colisiones con los alienígenas
+            collisions = pygame.sprite.spritecollide(
+                laser_sprite, self.game.formation.aliens, False, pygame.sprite.collide_mask
+            )
+
+            if collisions:
+                # Procesar solo la primera colisión
+                first_collision = collisions[0]
+                # Manejar la colisión
+                self.handle_alien_hit(first_collision)
+
+                # Eliminar el láser después de procesar la colisión
+                laser_sprite.kill()
+
+        # Procesar colisiones de láseres alienígenas contra jugadores
         for alien_sprite in self.game.formation.aliens:
-                                
-            if pygame.sprite.spritecollide(self.game.player, alien_sprite.laser_group, True, pygame.sprite.collide_mask):
-                # Reducir una vida
-                self.game.player.lives -= 1
-                if self.game.player.lives <= 0:
-                    self.game.player.lives = 0
-                                   
+            for laser_sprite in alien_sprite.laser_group:
+                if not laser_sprite.alive():
+                    continue  # Saltar si el láser ya ha sido eliminado
+
+                collisions = pygame.sprite.spritecollide(
+                    laser_sprite, self.game.player_group, False, pygame.sprite.collide_mask
+                )
+
+                if collisions:
+                    for player in collisions:
+                        player.lives -= 1
+                        if player.lives <= 0:
+                            player.lives = 0
+                    laser_sprite.kill()  # Eliminar el láser alienígena después del impacto
+
+        # Comprobar colisiones entre alienígenas y jugadores
+        for player in self.game.player_group:
+            collisions = pygame.sprite.spritecollide(
+                player, self.game.formation.aliens, True, pygame.sprite.collide_mask
+            )
+            if collisions:
+                player.lives -= 1
+                if player.lives <= 0:
+                    player.lives = 0
+
+        # Detectar colisión con el grupo de captura de luz y generar un clon si no existe
+        collisions = pygame.sprite.spritecollide(
+            self.game.player, self.game.capture_light_group, False
+        )
+        if collisions and not self.game.player.has_clone:
+            clone_x = self.game.player.rect.right + 5
+            clone_y = self.game.player.rect.centery
+            player_clone = Player(self.game, x=clone_x, y=clone_y)
+            self.game.player.has_clone = True
+            self.game.player_group.add(player_clone)
                     
-            if pygame.sprite.spritecollide(self.game.player, self.game.formation.aliens, True, pygame.sprite.collide_mask):
-                # Reducir una vida
-                self.game.player.lives -= 1
-                # Verificar si el jugador ha perdido todas las vidas
-                if self.game.player.lives <= 0:
-                    self.game.player.lives = 0
-                    
-        if pygame.sprite.spritecollide(self.game.player, self.game.capture_light_group, False):
-            if not self.game.player.has_clone:
-                # Crear el clon a la derecha del jugador original
-                clone_x = player.rect.right + 5
-                clone_y = player.rect.centery
-                player_clone = Player(self.game, x=clone_x, y=clone_y)
-                player.has_clone = True
-                self.game.player_group.add(player_clone)
-                
-        
-        
             
+            
+                
     def load_high_score(self):
         """Carga el high score desde un archivo, si el archivo no existe lo inicializa a 0."""
         if os.path.exists("high_score.txt"):
@@ -132,7 +126,25 @@ class Resources:
         centered_text_whidt = game_over_text.get_width()
         centered_text = (self.game.settings.WIDTH/2) - (centered_text_whidt // 2)
         self.screen.blit(game_over_text, (centered_text, 500))
-        
+
+
+    def handle_alien_hit(self, alien):
+        alien.on_laser_hit()
+        alien_type = alien.alien_type
+
+        if alien_type == "boss_blue" and alien.hit_count == 2:
+            alien.kill()
+        elif alien_type == "blue":
+            self.score += 100 if alien.attack_mode else 50
+            alien.kill()
+        elif alien_type == "red":
+            self.score += 160 if alien.attack_mode else 80
+            alien.kill()
+
+        # Crear y agregar la explosión
+        explosion_position = alien.rect.center
+        explosion = Explosion(self.game, explosion_position)  # Asumiendo que tienes una clase Explosion
+        self.game.explosion_group.add(explosion)        
         
     def draw_score(self):
         # Dibuja el puntaje actual en la pantalla.

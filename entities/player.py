@@ -1,6 +1,6 @@
 import pygame
 
-from entities.laser import *
+from entities.laser import Laser
 from debug import *
 
 
@@ -60,7 +60,7 @@ class Player(pygame.sprite.Sprite):
                     for player in self.game.player_group:
                         
                         
-                        self.player_shoot()
+                        self.shoot()
                         self.last_shot_time = current_time
                         self.shots_fired += 1
                         self.laser_collided = False  # Restablecer el indicador de colisión
@@ -68,13 +68,12 @@ class Player(pygame.sprite.Sprite):
                 self.shots_fired = 0
                 self.shoot_time = current_time
 
-    def player_shoot(self):
-       
-       
-
-        laser = Laser(self.rect.center, self.game)
+    def shoot(self):
+        laser = Laser(self.game, (self.rect.centerx, self.rect.top))
         self.laser_group.add(laser)
-        self.sound_shoot.play()
+        self.game.player_lasers.add(laser)  # Agregar al grupo global
+            
+        #self.sound_shoot.play()
     
     
     

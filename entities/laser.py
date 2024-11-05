@@ -3,7 +3,7 @@ import pygame
 
 class Laser (pygame.sprite.Sprite):
 
-    def __init__(self, position, game):
+    def __init__(self, game, position):
         super().__init__()
         self.game = game
         self.position = position

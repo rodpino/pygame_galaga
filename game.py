@@ -32,14 +32,16 @@ class Game():
         
         self.formation = Formation(self)
         self.explosion_size = (70, 70)
-        self.explosion = Explosion(self)
-        self.explosion_group = pygame.sprite.GroupSingle()
+       
+        self.explosion_group = pygame.sprite.Group()
         #self.explosion_group.add(self.explosion)
         # Player Setup
         self.player = Player(self)
         self.player_group = pygame.sprite.Group()
         self.player_group.add(self.player)
         self.hit_count = 0
+        
+        self.player_lasers = pygame.sprite.Group()
         
         self.capture_light = CaptureLight(self, 400, 200)
         self.capture_light_group = pygame.sprite.Group(self.capture_light)
@@ -80,7 +82,7 @@ class Game():
         self.background.update(delta_time)
         self.player_group.update(delta_time)
         self.resources.check_for_collision()
-        self.explosion.update(delta_time)
+        self.explosion_group.update(delta_time)
         self.resources.check_high_score()  # Verificar si el score actual supera el high score
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.update(delta_time)
