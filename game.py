@@ -33,11 +33,11 @@ class Game():
         self.formation = Formation(self)
         self.explosion_size = (70, 70)
         self.explosion = Explosion(self)
-        self.explosion_group = pygame.sprite.Group()
+        self.explosion_group = pygame.sprite.GroupSingle()
         #self.explosion_group.add(self.explosion)
         # Player Setup
         self.player = Player(self)
-        self.player_group = pygame.sprite.GroupSingle()
+        self.player_group = pygame.sprite.Group()
         self.player_group.add(self.player)
         self.hit_count = 0
         
@@ -99,6 +99,9 @@ class Game():
         self.resources.show_fps(fps)
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.draw(self.screen)
+            
+        for laser_shoot in self.player_group:
+            laser_shoot.laser_group.draw(self.screen) 
         
         #self.resources.draw_bezier_path(self.screen)
         #self.resources.debug(len(self.explosion_group))

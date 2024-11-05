@@ -1,5 +1,6 @@
 import pygame
 import os
+from entities.player import Player
 
 
 class Resources:
@@ -37,43 +38,43 @@ class Resources:
         return pygame.transform.scale(sprite, (sprite_size))
         
     def check_for_collision(self):
-        for laser_sprite in self.game.player_group.sprite.laser_group:
-            # Verificar colisiones usando pygame.sprite.collide_mask
-            collisions = pygame.sprite.spritecollide(laser_sprite, self.game.formation.aliens, False, pygame.sprite.collide_mask)
+        
+        for player in self.game.player_group:
+            for laser_sprite in player.game.player.laser_group:
+                # Verificar colisiones usando pygame.sprite.collide_mask
+                collisions = pygame.sprite.spritecollide(laser_sprite, self.game.formation.aliens, False, pygame.sprite.collide_mask)
 
-            for alien in collisions:
-                alien.on_laser_hit()  # Llamar al método para manejar el impacto del láser
-                alien_type = alien.alien_type
-                
-                # Manejar las colisiones
-                if alien.alien_type == "boss_blue" and alien.hit_count == 2:
-                    # Si es el segundo impacto, eliminar el alien
-                    alien.kill()
+                for alien in collisions:
+                    alien.on_laser_hit()  # Llamar al método para manejar el impacto del láser
+                    alien_type = alien.alien_type
                     
-                          
+                    # Manejar las colisiones
+                    if alien.alien_type == "boss_blue" and alien.hit_count == 2:
+                        # Si es el segundo impacto, eliminar el alien
+                        alien.kill()
                 
-                # Asignar puntos según el color del alien
-                if alien_type == "blue":
-                    if alien.attack_mode:
-                        self.score += 100
-                    else:
-                        self.score += 50
-                    alien.kill()
+                    # Asignar puntos según el color del alien
+                    if alien_type == "blue":
+                        if alien.attack_mode:
+                            self.score += 100
+                        else:
+                            self.score += 50
+                        alien.kill()
+                        
+                        
+                    elif alien_type == "red":
+                        if alien.attack_mode:
+                            self.score += 160
+                        else:
+                            self.score += 80
+                        alien.kill()  
                     
+                    explosion_position = alien.rect.center
+                    self.game.explosion.start_explosion(explosion_position)
+                    self.game.explosion_group.add(self.game.explosion)
                     
-                elif alien_type == "red":
-                    if alien.attack_mode:
-                        self.score += 160
-                    else:
-                        self.score += 80
-                    alien.kill()  
-                
-                explosion_position = alien.rect.center
-                self.game.explosion.start_explosion(explosion_position)
-                self.game.explosion_group.add(self.game.explosion)
-                
-            # Eliminar el láser después de cada colisión 
-                laser_sprite.kill()
+                # Eliminar el láser después de cada colisión 
+                    laser_sprite.kill()
                 
         
         for alien_sprite in self.game.formation.aliens:
@@ -93,8 +94,14 @@ class Resources:
                     self.game.player.lives = 0
                     
         if pygame.sprite.spritecollide(self.game.player, self.game.capture_light_group, False):
-            print ("colision CTM")
-        
+            if not self.game.player.has_clone:
+                # Crear el clon a la derecha del jugador original
+                clone_x = player.rect.right + 5
+                clone_y = player.rect.centery
+                player_clone = Player(self.game, x=clone_x, y=clone_y)
+                player.has_clone = True
+                self.game.player_group.add(player_clone)
+                
         
         
             
