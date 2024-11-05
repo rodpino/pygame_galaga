@@ -13,7 +13,7 @@ class CaptureLight(pygame.sprite.Sprite):
         self.image = self.capture_animation_frames[0]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        print(len(self.capture_animation_frames))
+        
         # Variables de animación
         self.is_capturing = False  # Controla si está en proceso de captura
         self.capture_start_time = None  # Tiempo en que comienza la captura
@@ -25,7 +25,7 @@ class CaptureLight(pygame.sprite.Sprite):
             self.is_capturing = True
             self.capture_start_time = pygame.time.get_ticks()
 
-    def update(self):
+    def update(self, frame_rect):
         """Actualiza la animación y verifica colisiones."""
         # Verificar colisión con el jugador
         #if self.rect.colliderect(self.game.player.rect):
@@ -33,24 +33,26 @@ class CaptureLight(pygame.sprite.Sprite):
 
         # Reproducir animación si está en captura
         #if self.is_capturing:
-        self.animate_capture()
-        print(self.capture_animation_frames)
-    def animate_capture(self):
+        self.animate_capture(frame_rect)
+        
+    def animate_capture(self, frame_rect):
         """Maneja la animación de captura."""
         if self.capture_start_time is not None:  # Asegurarse de que capture_start_time esté configurado
             elapsed_time = (pygame.time.get_ticks() - self.capture_start_time) / 1000.0
-            print (elapsed_time)
+            
             if elapsed_time < 5:  # Limita la animación a 5 segundos
                 # Cambiar de frame cada 500 ms
                 self.frame_index = int((elapsed_time * 1000) // 500) % len(self.capture_animation_frames)
+                
                 self.image = self.capture_animation_frames[self.frame_index]
-                print(self.frame_index)
+                
             else:
                 # Detener la animación después de 5 segundos
                 self.is_capturing = False
                 self.capture_start_time = None
 
         # Actualiza la posición del sprite en la pantalla
-        self.rect.midbottom = (self.rect.x, self.rect.y)
+        self.rect = frame_rect
+        
         self.game.screen.blit(self.image, self.rect)
-        print ("gjhghfjg")
+        

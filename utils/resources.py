@@ -6,7 +6,7 @@ class Resources:
     def __init__(self, game):
         """Clase para manejar recursos del juego."""
         self.game = game
-        self.SPRITE_SHEET = pygame.image.load(r"asset\Galaga_SpritesSheet.png")
+        self.SPRITE_SHEET = pygame.image.load(r"asset/Galaga_SpritesSheet.png")
         self.screen = pygame.display.get_surface()
         
         # Puntaje
@@ -91,6 +91,9 @@ class Resources:
                 # Verificar si el jugador ha perdido todas las vidas
                 if self.game.player.lives <= 0:
                     self.game.player.lives = 0
+                    
+        if pygame.sprite.spritecollide(self.game.player, self.game.capture_light_group, False):
+            print ("colision CTM")
         
         
         

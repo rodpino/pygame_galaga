@@ -845,6 +845,7 @@ class Alien(pygame.sprite.Sprite):
                     frame_index = int((elapsed_time % animation_duration) / frame_duration) % num_frames
                     self.capture_animation_frame = self.capture_animation_frames[frame_index]
                     # No continuar con el movimiento durante la pausa
+                    
                     return
             else:
             # Movimiento normal de ataque
@@ -1011,7 +1012,7 @@ class Alien(pygame.sprite.Sprite):
                 # Dibujar la animación de captura en la parte inferior central del alienígena
                 animation_frame = self.capture_animation_frame
                 frame_rect = animation_frame.get_rect(midtop=rect.midbottom)
-                
+                self.game.capture_light_group.update(frame_rect)
                 #surface.blit(animation_frame, frame_rect)
             
             #Renderizar el texto del mIndex
