@@ -1,13 +1,14 @@
 import pygame
 
-from entities.laser import *
+from entities.laser import Laser
 from debug import *
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, x=None, y=None):
         super().__init__()
         self.game = game
+        
         self.screen = pygame.display.get_surface()
         self.lives = 1
         self.laser_group = pygame.sprite.Group()
@@ -21,6 +22,11 @@ class Player(pygame.sprite.Sprite):
         self.image = self.nave_1
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect(center=(self.game.settings.WIDTH / 2, self.game.settings.HEIGHT - 95))
+        if x is not None and y is not None:
+            self.rect.center = (x, y)
+        else:
+            self.rect.center = (self.game.settings.WIDTH / 2, self.game.settings.HEIGHT - 95)
+        
         self.direction = pygame.math.Vector2()
         self.position = pygame.math.Vector2(self.rect.center)
         self.velocity = 380
@@ -33,7 +39,8 @@ class Player(pygame.sprite.Sprite):
         self.laser_collided = False  # Indicador de colisión del láser
         self.sound_shoot = pygame.mixer.Sound ("asset/sound_shoot_3.wav")
         self.mask = pygame.mask.from_surface(self.image)
-        
+        self.has_clone = False
+    
     def player_input(self):
         self.keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks()
@@ -49,17 +56,23 @@ class Player(pygame.sprite.Sprite):
             
             if self.shots_fired < 2:
                 if current_time - self.last_shot_time > self.rafaga_cooldown or self.laser_collided:
-                    self.player_shoot()
-                    self.last_shot_time = current_time
-                    self.shots_fired += 1
-                    self.laser_collided = False  # Restablecer el indicador de colisión
+                    
+                    for player in self.game.player_group:
+                        
+                        
+                        self.shoot()
+                        self.last_shot_time = current_time
+                        self.shots_fired += 1
+                        self.laser_collided = False  # Restablecer el indicador de colisión
             elif self.shots_fired >= 2 and current_time - self.shoot_time > self.shoot_cooldown:
                 self.shots_fired = 0
                 self.shoot_time = current_time
 
-    def player_shoot(self):
-        laser = Laser(self.rect.center, self.game)
+    def shoot(self):
+        laser = Laser(self.game, (self.rect.centerx, self.rect.top))
         self.laser_group.add(laser)
+        self.game.player_lasers.add(laser)  # Agregar al grupo global
+            
         #self.sound_shoot.play()
     
     

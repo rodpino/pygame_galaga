@@ -1,9 +1,10 @@
 import pygame
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def __init__(self, game, position):
         super().__init__()
         self.game = game
+        self.position = position
         self.index = 0
         self.frame_duration = 0.05  # Duración de cada fotograma en segundos
         self.time_accumulator = 0  # Acumulador de tiempo para delta_time

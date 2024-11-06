@@ -8,7 +8,7 @@ class AlienLaser(pygame.sprite.Sprite):
         self.game = game
         self.position = pygame.math.Vector2(alien_position)
         self.screen = pygame.display.get_surface()
-        self.sprite_sheet = pygame.image.load("asset\Galaga_SpritesSheet.png").convert_alpha()
+        self.sprite_sheet = pygame.image.load("asset/Galaga_SpritesSheet.png").convert_alpha()
         self.image = self.sprite_sheet.subsurface(307, 136, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
         self.image = pygame.transform.scale(self.image, (30, 30)) 
         self.image.set_colorkey((0, 0, 0))
