@@ -4,6 +4,7 @@ import random
 from entities.capture_player import CapturePlayer
 from entities.attack_curves_relativas import Curvas_relativas
 from entities.alien_laser import AlienLaser
+from entities.curvas_control import Curvas_control
 from settings import Settings
 
 class Alien(pygame.sprite.Sprite):
@@ -38,6 +39,8 @@ class Alien(pygame.sprite.Sprite):
         self.angle = 0.0  # Ángulo de rotación
         self.scale_factor_x = 2.2  # Aumentar al 150% del tamaño original
         self.scale_factor_y = 4.0  # Aumentar al 150% del tamaño original
+        self.width = self.game.settings.WIDTH
+        
         
         # Nueva variable para el control de impactos
         self.hit_count = 0  # Lleva la cuenta de los impactos recibidos
@@ -105,6 +108,7 @@ class Alien(pygame.sprite.Sprite):
         self.capture_player = CapturePlayer(self, game) 
         self.curvas_relativas = Curvas_relativas (self, formation, game)
         self.is_capture_formation = False  # Indica si el alienígena está en una formación de captura
+        
         
        
         
@@ -186,24 +190,24 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas rojos."""
         if self.mIndex in [0, 1, 2, 3]:
             self.curves = [
-                self.control_points(),
-                self.control_points_2()
+                self.game.curvas_control.control_points_1(),
+                self.game.curvas_control.control_points_2()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = self.bezier_id * 0.2
         elif self.mIndex in [4, 5, 6, 7]:
             self.curves = [
-                self.control_points_3(),
-                self.control_points_4(),
-                self.control_points_5()
+                self.game.curvas_control.control_points_3(),
+                self.game.curvas_control.control_points_4(),
+                self.game.curvas_control.control_points_5()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = self.bezier_id * 0.25
         elif self.mIndex in [8, 9, 10, 11, 12, 13, 14, 15]:
             self.curves = [
-                self.control_points_6(),
-                self.control_points_7(),
-                self.control_points_8()
+                self.game.curvas_control.control_points_6(),
+                self.game.curvas_control.control_points_7(),
+                self.game.curvas_control.control_points_8()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
@@ -212,22 +216,22 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas azules."""
         if self.mIndex in [16, 17, 18, 19]:
             self.curves = [
-                self.control_points_12(),
-                self.control_points_13()
+                self.game.curvas_control.control_points_12(),
+                self.game.curvas_control.control_points_13()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
         elif self.mIndex in [20, 21, 22, 23, 24, 25, 26, 27]:
             self.curves = [
-                self.control_points_14(),
-                self.control_points_15()
+                self.game.curvas_control.control_points_14(),
+                self.game.curvas_control.control_points_15()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
         elif self.mIndex in [28, 29, 30, 31, 32, 33, 34, 35]:
             self.curves = [
-                self.control_points_10(),
-                self.control_points_11()
+                self.game.curvas_control.control_points_10(),
+                self.game.curvas_control.control_points_11()
             ]
         self.start_x, self.start_y = self.curves[0][0]
         self.start_delay = (self.bezier_id * 0.2)
@@ -236,153 +240,17 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas azules."""
         if self.mIndex in [36, 37, 38, 39]:
             self.curves = [
-                self.control_points_3(),
-                self.control_points_4(),
-                self.control_points_5()
+                self.game.curvas_control.control_points_3(),
+                self.game.curvas_control.control_points_4(),
+                self.game.curvas_control.control_points_5()
             ]
            
         self.start_x, self.start_y = self.curves[0][0]
         self.start_delay = (self.bezier_id * 0.25 + 0.88)
 
-        
-        
 
-    def control_points(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [188, -10],
-            [320, 230],
-            [560, 260],
-            [580, 450]
-        ])
 
-    def control_points_2(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [580, 450],
-            [592, 638],
-            [352, 657],
-            [342, 463]
-        ])
-    def control_points_3(self):
-        # Puntos de control originales para aliens 4-7
-        return np.array([
-            ([-5, 706]),
-            ([205, 659]),
-            ([263, 524]),
-            ([212, 463])
-        ])
 
-    def control_points_4(self):
-        return (
-            np.array([212, 463]),
-            np.array([163, 356]),
-            np.array([15, 410]),
-            np.array([56, 517])
-        )
-
-    def control_points_5(self):
-        # El último punto de control es la posición objetivo actual (sin movimiento lateral)
-        return (
-            np.array([56, 517]),
-            np.array([123, 619]),
-            np.array([248, 561]),
-            np.array([260, 463])
-        )
-
-    def control_points_6(self):
-        width = self.formation.game.settings.WIDTH
-        return (
-            np.array([width + 5, 706]),
-            np.array([width - 205, 659]),
-            np.array([width - 263, 524]),
-            np.array([width - 212, 463])
-        )
-
-    def control_points_7(self):
-        width = self.formation.game.settings.WIDTH
-        return (
-            np.array([width - 212, 463]),
-            np.array([width - 163, 356]),
-            np.array([width - 15, 410]),
-            np.array([width - 56, 517])
-        )
-
-    def control_points_8(self):
-        width = self.formation.game.settings.WIDTH
-        return (
-            np.array([width - 56, 517]),
-            np.array([width - 123, 619]),
-            np.array([width - 248, 561]),
-            np.array([width - 260, 463])
-        )
-
-    def control_points_9(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [170, -10],
-            [268, 250],
-            [560, 195],
-            [600, 385]
-        ])
-    def control_points_10(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [250, -10],
-            [320, 250],
-            [560, 195],
-            [580, 385]
-        ])
-    
-
-    def control_points_11(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [580, 385],
-            [590, 650],
-            [280, 680],
-            [330, 415]
-        ]) 
-    def control_points_12(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [width - 188, -10],
-            [width - 320, 230],
-            [width - 560, 260],
-            [width - 580, 450]
-        ])
-    def control_points_13(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [width - 580, 450],
-            [width - 592, 638],
-            [width - 352, 657],
-            [width - 342, 463]
-
-        ])
-        
-    def control_points_14(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [width - 250, -10],
-            [width - 320, 250],
-            [width - 560, 195],
-            [width - 580, 385]
-
-        ])   
-        
-        
-    def control_points_15(self):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [width - 580, 385],
-            [width - 650, 650],
-            [width - 280, 680],
-            [width - 300, 415]
-
-        ])      
-        
-  
     def bezier_curve(self, points, t):
         """Calcula el punto en la curva Bézier cúbica para un valor de t dado."""
         return (
@@ -746,7 +614,7 @@ class Alien(pygame.sprite.Sprite):
     
     
     def debug_2(self, surface):
-        if self.alien_type == 'boss_green' or self.alien_type == 'boss_blue':
+        if self.alien_type == 'red' or self.alien_type == 'boss_blue':
             # Crear una lista con los nombres y valores de las variables
             debug_info = [
                 #f"attack_t: {self.attack_t:.2f}",
@@ -990,8 +858,7 @@ class Alien(pygame.sprite.Sprite):
         # Actualizar la animación global
         
         self.shoot(delta_time)                
-                
-    
+                 
 
     def draw(self, surface):
         if self.active or self.arrived or self.attack_mode or self.pausing:
@@ -1001,8 +868,7 @@ class Alien(pygame.sprite.Sprite):
             frames = self.animation_frames_by_type[self.alien_type]
             self.image = frames[self.global_animation_index]
             
-            
-            
+          
             # Rotar la imagen
             self.rotated_image = pygame.transform.rotate(self.image, -self.angle)
             rect = self.rotated_image.get_rect(center=(int(self.x), int(self.y)))
@@ -1017,8 +883,8 @@ class Alien(pygame.sprite.Sprite):
             
             #Renderizar el texto del mIndex
             text = self.formation.game.FONT.render(str(self.mIndex), True, self.game.settings.WHITE)
-            text_rect = text.get_rect(center=(int(self.x), int(self.y) ))
-            #surface.blit(text, text_rect)
+            text_rect = text.get_rect(center=(int(self.x), int(self.y)))
+            surface.blit(text, text_rect)
             
-        #self.draw_bezier_path(surface)
+        #self.game.resources.draw_bezier_path(surface)
         #self.debug_2(surface)

@@ -14,7 +14,7 @@ from entities.formation import Formation
 from entities.alien import Alien
 from utils.resources import Resources
 from entities.capture_light import CaptureLight
-
+from entities.curvas_control import Curvas_control
 
 
 class Game():
@@ -27,9 +27,9 @@ class Game():
         pygame.display.set_caption("Galaga Pygame")
 
         # Inicializar componentes del juego
-        self.resources = Resources(self)
+        self.curvas_control = Curvas_control(self)
         self.background = Background(self)
-        
+        self.resources = Resources(self)
         self.formation = Formation(self)
         self.explosion_size = (70, 70)
         self.explosion = Explosion(self)
@@ -50,7 +50,7 @@ class Game():
         self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
 
         # Fuente para mostrar el mIndex
-        self.FONT = pygame.font.SysFont(None, 30)
+        self.FONT = pygame.font.SysFont(None, 39)
         self.font = pygame.font.Font("asset/fonts/emulogic.ttf", 8)
 
         # Fuente para mostrar el puntaje
@@ -74,6 +74,8 @@ class Game():
             if event.type == pygame.QUIT:
                 self.resources.save_high_score()
                 self.running = False
+   
+                                 
 
     def update_game_state(self, delta_time):
         self.formation.update(delta_time)

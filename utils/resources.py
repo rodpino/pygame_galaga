@@ -2,10 +2,11 @@ import pygame
 import os
 
 
-class Resources:
+class Resources():
     def __init__(self, game):
         """Clase para manejar recursos del juego."""
         self.game = game
+        
         self.SPRITE_SHEET = pygame.image.load(r"asset/Galaga_SpritesSheet.png")
         self.screen = pygame.display.get_surface()
         
@@ -49,9 +50,8 @@ class Resources:
                 if alien.alien_type == "boss_blue" and alien.hit_count == 2:
                     # Si es el segundo impacto, eliminar el alien
                     alien.kill()
-                    
-                          
-                
+
+
                 # Asignar puntos según el color del alien
                 if alien_type == "blue":
                     if alien.attack_mode:
@@ -95,9 +95,7 @@ class Resources:
         if pygame.sprite.spritecollide(self.game.player, self.game.capture_light_group, False):
             print ("colision CTM")
         
-        
-        
-            
+      
     def load_high_score(self):
         """Carga el high score desde un archivo, si el archivo no existe lo inicializa a 0."""
         if os.path.exists("high_score.txt"):
@@ -176,73 +174,68 @@ class Resources:
         fps_text = self.font.render(f"FPS: {int(self.fps)}", True, (255, 255, 255))  # Blanco
         self.screen.blit(fps_text, (10, 100))  # Posición en la esquina superior izquierda
 
-    # def draw_bezier_path(self, surface):
-    # # Número de puntos para la línea de puntos
-    #     num_points = 50
-    #     curve_colors = [(255, 255, 255), (0, 255, 0), (0, 0, 255), (255, 0, 0)]  # Colores para cada curva
-    #     control_colors = [(255, 0, 0), (0, 255, 255), (255, 0, 255), (0, 255, 0)]  # Colores para los puntos de control
-    #     radius = 3  # Tamaño de los puntos de control
-
-        
-    #     if self.game.formation.attack_mode:
-    #         # Número de puntos para la línea de puntos
-    #         num_points = 50  # Aumenta o disminuye el número de puntos para ajustar la calidad del dibujo
-    #         curve_color = (255, 255, 255)  # Color de la curva
-    #         radius = 2  # Tamaño de los puntos de control (opcional)
-
-    #         # Asegurarse de que haya curvas de ataque definidas
-    #         if len(self.attack_curves) > 0:
-    #             for curve_index, curve in enumerate(self.attack_curves):
-    #                 previous_point = None  # Almacena el punto anterior para dibujar líneas entre puntos
-
-    #                 # Dibujar la línea punteada de la curva
-    #                 for i in range(num_points + 1):
-    #                     t = i / num_points  # Valor de t entre 0 y 1
-    #                     point = self.bezier_curve(curve, t)  # Calcular el punto en la curva
-    #                     x, y = int(point[0]), int(point[1])  # Convertir las coordenadas a enteros
-
-    #                     # Dibujar un pequeño círculo en cada punto de la curva (para hacerla punteada)
-    #                     if previous_point:
-    #                         if i % 2 == 0:  # Hacer líneas punteadas (dibujar en cada 2do punto)
-    #                             pygame.draw.line(surface, curve_color, previous_point, (x, y), 1)
-
-    #                     previous_point = (x, y)  # Actualizar el punto anterior para la siguiente línea
-
-    #                 # Opcional: dibujar los puntos de control
-    #                 for control_point in curve:
-    #                     control_x, control_y = int(control_point[0]), int(control_point[1])
-
-    #                     # Dibujar un círculo para el punto de control (opcional)
-    #                     pygame.draw.circle(surface, curve_color, (control_x, control_y), radius)
-
-            
-        
-        
-    #     if len(self.game.formation.aliens.curves) > 0:
-    #         for curve_index, curve in enumerate(self.curves):
-    #             # Escoger el color de la curva y de los puntos de control
-    #             curve_color = curve_colors[curve_index % len(curve_colors)]
-    #             control_color = control_colors[curve_index % len(control_colors)]
-
-    #             # Dibujar la línea punteada de la curva
-    #             for i in range(num_points + 1):
-    #                 t = i / num_points  # Valor de t entre 0 y 1
-    #                 point = self.bezier_curve(curve, t)  # Calcular el punto en la curva
-    #                 x, y = int(point[0]), int(point[1])  # Convertir las coordenadas a enteros
-
-    #                 # Dibujar un círculo en cada punto de la curva
-    #                 #pygame.draw.circle(surface, curve_color, (x, y), radius - 1)
-
-    #             # Dibujar los puntos de control con sus coordenadas
-    #             for control_point in curve:
-    #                 control_x, control_y = int(control_point[0]), int(control_point[1])
-
-    #                 # Dibujar un círculo para el punto de control
-    #                 #pygame.draw.circle(surface, control_color, (control_x, control_y), radius + 2)
-
-    #                 # Dibujar el valor (x, y) del punto de control sobre el punto
-    #                 text_surface = self.formation.game.FONT.render(f"({control_x}, {control_y})", True, control_color)
-    #                 surface.blit(text_surface, (control_x + 5, control_y + 5))  # Colocar el texto cerca del punto de control
+    def bezier_curve(self, points, t):
+        """Calcula el punto en la curva Bézier cúbica para un valor de t dado."""
+        return (
+            (1 - t) ** 3 * points[0] +
+            3 * (1 - t) ** 2 * t * points[1] +
+            3 * (1 - t) * t ** 2 * points[2] +
+            t ** 3 * points[3]
+        )
 
 
-           
+    
+    
+    def draw_bezier_path(self, surface, force_redraw=True):
+        if not hasattr(self, 'cached_curve_surface') or force_redraw:
+            # Crear una superficie temporal para dibujar las curvas
+            self.cached_curve_surface = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+            self.cached_curve_surface.fill((0, 0, 0, 0))  # Transparente
+
+            num_points = 50
+            curve_colors = [(255, 255, 255), (0, 255, 0), (0, 0, 255), (255, 0, 0)]
+            control_colors = [(255, 0, 0), (0, 255, 255), (255, 0, 255), (0, 255, 0)]
+
+            for alien in self.game.formation.aliens:
+                # Dibuja las curvas normales
+                if hasattr(alien, 'curves') and len(alien.curves) > 0:
+                    for curve_index, curve in enumerate(alien.curves):
+                        curve_color = curve_colors[curve_index % len(curve_colors)]
+                        control_color = control_colors[curve_index % len(control_colors)]
+                        previous_point = None
+
+                        for i in range(num_points + 1):
+                            t = i / num_points
+                            point = self.bezier_curve(curve, t)
+                            x, y = int(point[0]), int(point[1])
+                            if previous_point is not None:
+                                pygame.draw.line(self.cached_curve_surface, curve_color, previous_point, (x, y), 1)
+                            previous_point = (x, y)
+
+                        for control_point in curve:
+                            control_x, control_y = int(control_point[0]), int(control_point[1])
+                            pygame.draw.circle(self.cached_curve_surface, control_color, (control_x, control_y), 3)
+
+                # Dibuja las curvas de ataque si están en fase de ataque y tienen `attack_curves`
+                if alien.attack_mode and hasattr(alien, 'attack_curves') and len(alien.attack_curves) > 0:
+                    print(f"Alien {alien} tiene attack_curves")  # Verifica que este mensaje se imprima
+
+                    attack_curve_color = (255, 165, 0)  # Color para las curvas de ataque
+                    attack_control_color = (255, 69, 0)  # Color para los puntos de control de ataque
+                    for attack_curve in alien.attack_curves:
+                        previous_point = None
+
+                        for i in range(num_points + 1):
+                            t = i / num_points
+                            point = self.bezier_curve(attack_curve, t)
+                            x, y = int(point[0]), int(point[1])
+                            if previous_point is not None:
+                                pygame.draw.line(self.screen, attack_curve_color, previous_point, (x, y), 1)
+                            previous_point = (x, y)
+
+                        # for control_point in attack_curve:
+                        #     control_x, control_y = int(control_point[0]), int(control_point[1])
+                        #     pygame.draw.circle(self.surface, attack_control_color, (control_x, control_y), 3)
+
+        # Blit de la superficie temporal en el `surface` principal
+       #surface.blit(self.cached_curve_surface, (0, 0))

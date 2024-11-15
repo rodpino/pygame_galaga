@@ -252,7 +252,7 @@ class Game:
             self.formation.update (delta_time)
             self.background.update(delta_time)
             self.player_group.update(delta_time)
-            self.check_for_collision()
+            #self.check_for_collision()
             self.check_high_score()  # Verificar si el score actual supera el high score
             for alien_sprite in self.formation.aliens:
                 alien_sprite.laser_group.update(delta_time)
@@ -265,7 +265,7 @@ class Game:
             self.player_group.draw(self.SCREEN)
             self.player_sprite.laser_group.draw(self.SCREEN)
             self.draw_score()
-            self.player_sprite.draw()
+            self.player_group.draw(self.SCREEN)
             # Actualizar y dibujar explosiones
             self.explosion_group.update(delta_time)
             self.explosion_group.draw(self.SCREEN)
@@ -1346,18 +1346,18 @@ class Alien(pygame.sprite.Sprite):
                     x, y = int(point[0]), int(point[1])  # Convertir las coordenadas a enteros
 
                     # Dibujar un círculo en cada punto de la curva
-                    #pygame.draw.circle(surface, curve_color, (x, y), radius - 1)
+                    pygame.draw.circle(surface, curve_color, (x, y), radius - 1)
 
                 # Dibujar los puntos de control con sus coordenadas
                 for control_point in curve:
                     control_x, control_y = int(control_point[0]), int(control_point[1])
 
                     # Dibujar un círculo para el punto de control
-                    #pygame.draw.circle(surface, control_color, (control_x, control_y), radius + 2)
+                    pygame.draw.circle(surface, control_color, (control_x, control_y), radius + 2)
 
                     # Dibujar el valor (x, y) del punto de control sobre el punto
                     text_surface = self.formation.game.FONT.render(f"({control_x}, {control_y})", True, control_color)
-                    # surface.blit(text_surface, (control_x + 5, control_y + 5))  # Colocar el texto cerca del punto de control
+                    surface.blit(text_surface, (control_x + 5, control_y + 5))  # Colocar el texto cerca del punto de control
 
 
     

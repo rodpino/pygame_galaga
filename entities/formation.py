@@ -39,6 +39,7 @@ class Formation:
         self.define_attack_formations()
         self.allowed_attack_types = ['red', 'blue', 'boss_green', 'boss_green, red, red']
         #self.curvas_relativas = Curvas_relativas (self)
+    
     def create_formation(self):
         """Crear alienígenas y calcular sus posiciones objetivo."""
         self.add_aliens_to_group("red", 16)
@@ -358,7 +359,9 @@ class Formation:
             [38, 8, 4],
             [36, 4, 0],
             [37, 1, 5],
-            [39, 5, 9]
+            [39, 5, 9],
+            [37, 0, 5], 
+            [36, 4, 1]
         ]
 
         possible_aliens = [alien for alien in self.aliens if not alien.attack_mode and alien.arrived]
