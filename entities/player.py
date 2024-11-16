@@ -1,4 +1,5 @@
 import pygame
+import time
 
 from entities.laser import *
 from debug import *
@@ -9,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.screen = pygame.display.get_surface()
-        self.lives = 1
+        self.lives = 3
         self.laser_group = pygame.sprite.Group()
         self.sprite_sheet = pygame.image.load("asset/Galaga_SpritesSheet.png").convert_alpha()
         self.nave_1 = self.sprite_sheet.subsurface(109, 1, self.game.settings.SPRITE_SIZE, self.game.settings.SPRITE_SIZE)
@@ -34,6 +35,22 @@ class Player(pygame.sprite.Sprite):
         self.sound_shoot = pygame.mixer.Sound ("asset/sound_shoot_3.wav")
         self.mask = pygame.mask.from_surface(self.image)
         
+        # atricutis rotate_palyer
+        
+        self.sprite = self.nave_2
+        self.duration = 2
+        
+        self.rotation_speed = 80
+        self.start_time = None
+        self.elapsed_time = 0
+        self.angle = 0
+   
+        
+        self.active_rotation = False  # Indica si la rotación está activa
+        
+        
+        
+                
     def player_input(self):
         self.keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks()
@@ -61,9 +78,7 @@ class Player(pygame.sprite.Sprite):
         laser = Laser(self.rect.center, self.game)
         self.laser_group.add(laser)
         #self.sound_shoot.play()
-    
-    
-    
+
     def draw_life_player(self):
         """dibuja vidas del player"""
         for i in range(self.lives):
@@ -75,17 +90,47 @@ class Player(pygame.sprite.Sprite):
             
         if self.lives == 0 or len(self.game.formation.aliens) == 0:
             self.game.resources.game_over()  # Llama a la función para mostrar el texto "Game Over"
-                    
+     
+    def start(self):
+        """Inicia la rotación."""
+        self.start_time = time.time()
+        self.active_rotation = True
+        print("colisionnnnnn")
+
+    def rotate_player(self):
+        """Actualiza la rotación del sprite."""
+        if not self.active_rotation:
+            
+            return
+        print("rotacion activa")
+        # Calcula el tiempo transcurrido
+        self.elapsed_time = time.time() - self.start_time
+
+        # Verifica si la animación ha finalizado
+        if self.elapsed_time >= self.duration:
+            self.active_rotation = False
+            return
+
+        # Calcula el ángulo actual de rotación
+        self.angle += self.rotation_speed * (1 / 60)  # Aproximación para 60 FPS
+        self.angle %= 360  # Asegura que el ángulo esté en [0, 360)
+
+        # Rotar el sprite
+        rotated_sprite = pygame.transform.rotate(self.sprite, self.angle)
+
+        # Recalcula el rectángulo para mantenerlo centrado
+        rotated_rect = rotated_sprite.get_rect(center=self.rect.center)
+
+        # Dibujar el sprite rotado en la pantalla
+        self.screen.blit(rotated_sprite, rotated_rect.topleft)
+     
+
     def update(self, delta_time):
         self.player_input()
         self.position.x += self.direction.x * self.velocity * delta_time
         self.rect.x = round(self.position.x)
         self.laser_group.update(delta_time)
-        
-        # Debugging the player state
-        # self.debug(f"Shots fired: {self.shots_fired}", 10, 10)
-        # self.debug(f"Shoot cooldown: {self.shoot_cooldown}", 30, 10)
-        # self.debug(f"Laser collided: {self.laser_collided}", 50, 10)
+        self.rotate_player()
 
     def debug(self, info, y=100, x=50):
         self.screen = pygame.display.get_surface()
@@ -93,3 +138,4 @@ class Player(pygame.sprite.Sprite):
         debug_rect = debug_surf.get_rect(topleft=(x, y))
         pygame.draw.rect(self.screen, "black", debug_rect)
         self.screen.blit(debug_surf, debug_rect)
+

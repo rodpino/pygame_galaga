@@ -5,16 +5,15 @@ import time
 import os
 
 from settings import Settings
-from entities.player import Player
-from entities.laser import Laser
+from entities.player import *
 from entities.explosion import Explosion
-from entities.attack_curves_relativas import Curvas_relativas
 from entities.background import Background
 from entities.formation import Formation
 from entities.alien import Alien
 from utils.resources import Resources
 from entities.capture_light import CaptureLight
-from entities.curvas_control import Curvas_control
+from entities.curvas_control import Grid_formation_curves
+from entities.curvas_control import Alien_attack_curves
 
 
 class Game():
@@ -27,26 +26,27 @@ class Game():
         pygame.display.set_caption("Galaga Pygame")
 
         # Inicializar componentes del juego
-        self.curvas_control = Curvas_control(self)
+        self.grid_formation_curves = Grid_formation_curves(self)
+        
         self.background = Background(self)
         self.resources = Resources(self)
         self.formation = Formation(self)
         self.explosion_size = (70, 70)
         self.explosion = Explosion(self)
         self.explosion_group = pygame.sprite.Group()
-        #self.explosion_group.add(self.explosion)
+        
+        # self.explosion_group.add(self.explosion)
         # Player Setup
         self.player = Player(self)
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
         self.hit_count = 0
-        
         self.capture_light = CaptureLight(self, 400, 200)
         self.capture_light_group = pygame.sprite.Group(self.capture_light)
         # Puntaje
         self.score = 0  # Iniciar el puntaje en 0
         self.high_score = self.resources.load_high_score()
-         # Fuente para mostrar el puntaje
+        # Fuente para mostrar el puntaje
         self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
 
         # Fuente para mostrar el mIndex
@@ -56,7 +56,9 @@ class Game():
         # Fuente para mostrar el puntaje
         self.FONT_score = pygame.font.Font('asset/fonts/emulogic.ttf', 20)
         self.clock = pygame.time.Clock()
-    
+        
+       
+
     def calculate_delta_time(self) -> float:
         """Calcula y devuelve el delta_time usando time.time()"""
 
@@ -74,8 +76,6 @@ class Game():
             if event.type == pygame.QUIT:
                 self.resources.save_high_score()
                 self.running = False
-   
-                                 
 
     def update_game_state(self, delta_time):
         self.formation.update(delta_time)
@@ -87,9 +87,9 @@ class Game():
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.update(delta_time)
         Alien.sprite_animation(delta_time)
-        #self.capture_light.update()
+        # self.capture_light.update()
 
-    def render(self, fps):
+    def render(self, fps, delta_time):
         self.screen.fill(self.settings.BLACK)
         self.background.draw()
         self.formation.draw(self.screen)
@@ -102,8 +102,11 @@ class Game():
         for alien_sprite in self.formation.aliens:
             alien_sprite.laser_group.draw(self.screen)
         
-        #self.resources.draw_bezier_path(self.screen)
-        #self.resources.debug(len(self.explosion_group))
+        self.player.update(delta_time)
+        # self.resources.draw_path_attack(self.screen)
+        # self.resources.draw_path_formation(self.screen)
+        
+        # self.resources.debug(len(self.explosion_group))
         pygame.display.flip()
 
     def run(self):
@@ -118,7 +121,7 @@ class Game():
             self.handle_events()
             self.update_game_state(delta_time)
             
-            self.render(fps)
+            self.render(fps, delta_time)
             
         # Salir de Pygame
         pygame.quit()

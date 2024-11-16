@@ -351,8 +351,8 @@ class Formation:
             else:  # Si el índice es impar
                 #alien.define_attack_curves_3()
                 self.initiate_red_attack_group_1()
-                
-                
+
+
     def initiate_combined_attack_formation(self, formation):
         # Obtener los índices de las formaciones específicas
         formations_indices = [
@@ -360,7 +360,7 @@ class Formation:
             [36, 4, 0],
             [37, 1, 5],
             [39, 5, 9],
-            [37, 0, 5], 
+            [37, 0, 5],
             [36, 4, 1]
         ]
 

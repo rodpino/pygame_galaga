@@ -2,10 +2,10 @@ import pygame
 import numpy as np
 import random
 from entities.capture_player import CapturePlayer
-from entities.attack_curves_relativas import Curvas_relativas
 from entities.alien_laser import AlienLaser
-from entities.curvas_control import Curvas_control
 from settings import Settings
+from entities.curvas_control import Alien_attack_curves
+from entities.curvas_control import Relative_curves
 
 class Alien(pygame.sprite.Sprite):
     # Variables de clase para la animación
@@ -40,7 +40,7 @@ class Alien(pygame.sprite.Sprite):
         self.scale_factor_x = 2.2  # Aumentar al 150% del tamaño original
         self.scale_factor_y = 4.0  # Aumentar al 150% del tamaño original
         self.width = self.game.settings.WIDTH
-        
+        self.alien_attack_curves = Alien_attack_curves(self)
         
         # Nueva variable para el control de impactos
         self.hit_count = 0  # Lleva la cuenta de los impactos recibidos
@@ -106,7 +106,7 @@ class Alien(pygame.sprite.Sprite):
         self.last_shot_time = 0
 
         self.capture_player = CapturePlayer(self, game) 
-        self.curvas_relativas = Curvas_relativas (self, formation, game)
+        self.curvas_relativas = Relative_curves (self, formation, game)
         self.is_capture_formation = False  # Indica si el alienígena está en una formación de captura
         
         
@@ -190,24 +190,24 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas rojos."""
         if self.mIndex in [0, 1, 2, 3]:
             self.curves = [
-                self.game.curvas_control.control_points_1(),
-                self.game.curvas_control.control_points_2()
+                self.game.grid_formation_curves.control_points_1(),
+                self.game.grid_formation_curves.control_points_2()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = self.bezier_id * 0.2
         elif self.mIndex in [4, 5, 6, 7]:
             self.curves = [
-                self.game.curvas_control.control_points_3(),
-                self.game.curvas_control.control_points_4(),
-                self.game.curvas_control.control_points_5()
+                self.game.grid_formation_curves.control_points_3(),
+                self.game.grid_formation_curves.control_points_4(),
+                self.game.grid_formation_curves.control_points_5()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = self.bezier_id * 0.25
         elif self.mIndex in [8, 9, 10, 11, 12, 13, 14, 15]:
             self.curves = [
-                self.game.curvas_control.control_points_6(),
-                self.game.curvas_control.control_points_7(),
-                self.game.curvas_control.control_points_8()
+                self.game.grid_formation_curves.control_points_6(),
+                self.game.grid_formation_curves.control_points_7(),
+                self.game.grid_formation_curves.control_points_8()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
@@ -216,22 +216,22 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas azules."""
         if self.mIndex in [16, 17, 18, 19]:
             self.curves = [
-                self.game.curvas_control.control_points_12(),
-                self.game.curvas_control.control_points_13()
+                self.game.grid_formation_curves.control_points_12(),
+                self.game.grid_formation_curves.control_points_13()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
         elif self.mIndex in [20, 21, 22, 23, 24, 25, 26, 27]:
             self.curves = [
-                self.game.curvas_control.control_points_14(),
-                self.game.curvas_control.control_points_15()
+                self.game.grid_formation_curves.control_points_14(),
+                self.game.grid_formation_curves.control_points_15()
             ]
             self.start_x, self.start_y = self.curves[0][0]
             self.start_delay = (self.bezier_id * 0.2)
         elif self.mIndex in [28, 29, 30, 31, 32, 33, 34, 35]:
             self.curves = [
-                self.game.curvas_control.control_points_10(),
-                self.game.curvas_control.control_points_11()
+                self.game.grid_formation_curves.control_points_10(),
+                self.game.grid_formation_curves.control_points_11()
             ]
         self.start_x, self.start_y = self.curves[0][0]
         self.start_delay = (self.bezier_id * 0.2)
@@ -240,9 +240,9 @@ class Alien(pygame.sprite.Sprite):
         """Define las curvas específicas para los alienígenas azules."""
         if self.mIndex in [36, 37, 38, 39]:
             self.curves = [
-                self.game.curvas_control.control_points_3(),
-                self.game.curvas_control.control_points_4(),
-                self.game.curvas_control.control_points_5()
+                self.game.grid_formation_curves.control_points_3(),
+                self.game.grid_formation_curves.control_points_4(),
+                self.game.grid_formation_curves.control_points_5()
             ]
            
         self.start_x, self.start_y = self.curves[0][0]
@@ -297,37 +297,37 @@ class Alien(pygame.sprite.Sprite):
     def define_attack_curves_1_1(self, offset_x=0):
         if self.alien_type == "red" or "blue":
             self.attack_curves = [
-                self.attack_control_points_1_1(offset_x),
-                self.attack_control_points_1_2(offset_x),
-                self.attack_control_points_1_3(offset_x),
-                self.attack_control_points_1_4(offset_x)
+                self.alien_attack_curves.attack_control_points_1_1(offset_x),
+                self.alien_attack_curves.attack_control_points_1_2(offset_x),
+                self.alien_attack_curves.attack_control_points_1_3(offset_x),
+                self.alien_attack_curves.attack_control_points_1_4(offset_x)
             ]
             
     def define_attack_curves_2_1(self, offset_x=0):
         if self.alien_type == "red"or "blue":
             self.attack_curves = [
-                self.attack_control_points_2_1(offset_x),
-                self.attack_control_points_2_2(offset_x),
-                self.attack_control_points_2_3(offset_x),
-                self.attack_control_points_2_4(offset_x)
+                self.alien_attack_curves.attack_control_points_2_1(offset_x),
+                self.alien_attack_curves.attack_control_points_2_2(offset_x),
+                self.alien_attack_curves.attack_control_points_2_3(offset_x),
+                self.alien_attack_curves.attack_control_points_2_4(offset_x)
             ]
 
     def define_attack_curves(self, offset_x=0):
         if self.alien_type == "blue":
             self.attack_curves = [
-                self.attack_control_points_1_1(offset_x),
-                self.attack_control_points_1_2(offset_x),
-                self.attack_control_points_1_3(offset_x),
-                self.attack_control_points_1_4(offset_x)
+                self.alien_attack_curves.attack_control_points_1_1(offset_x),
+                self.alien_attack_curves.attack_control_points_1_2(offset_x),
+                self.alien_attack_curves.attack_control_points_1_3(offset_x),
+                self.alien_attack_curves.attack_control_points_1_4(offset_x)
             ]
 
     def define_attack_curves_2(self, offset_x=0 ) : 
         random_xx =  random.randint(-50, 120)
         if self.alien_type == "blue":
             self.attack_curves = [
-                self.attack_control_points_4(random_xx, offset_x),
-                self.attack_control_points_5(random_xx, offset_x),
-                self.attack_control_points_6(random_xx, offset_x)
+                self.alien_attack_curves.attack_control_points_4(random_xx, offset_x),
+                self.alien_attack_curves.attack_control_points_5(random_xx, offset_x),
+                self.alien_attack_curves.attack_control_points_6(random_xx, offset_x)
                 
             ]
 
@@ -335,9 +335,9 @@ class Alien(pygame.sprite.Sprite):
         random_xx =  random.randint(-150, 50)
         if self.alien_type == "blue":
             self.attack_curves = [
-                self.attack_control_points_8(random_xx, offset_x),
-                self.attack_control_points_9(random_xx, offset_x),
-                self.attack_control_points_10(random_xx, offset_x)
+                self.alien_attack_curves.attack_control_points_8(random_xx, offset_x),
+                self.alien_attack_curves.attack_control_points_9(random_xx, offset_x),
+                self.alien_attack_curves.attack_control_points_10(random_xx, offset_x)
             
         ]
 
@@ -345,84 +345,10 @@ class Alien(pygame.sprite.Sprite):
     def define_attack_curves_4(self, offset_x=0):
         self.attack_curves = [
             
-            self.attack_control_points_11(offset_x),
-            self.attack_control_points_12(offset_x)
+            self.alien_attack_curves.attack_control_points_11(offset_x),
+            self.alien_attack_curves.attack_control_points_12(offset_x)
         ]       
 
-
-    def attack_control_points_1_1(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [self.x, self.y],  # Comienza desde la posición actual
-            [174, 96],  # Un ejemplo de punto intermedio
-            [50, 250],  # Otro punto
-            [300, 395]  # Final en una posición aleatoria
-        ])
-        
-    def attack_control_points_1_2(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [300, 395] ,  # Comienza desde la posición actual
-            [480, 455],  # Un ejemplo de punto intermedio
-            [470, 620],  # Otro punto
-            [370, 650]  # Final en una posición aleatoria
-        ])
-        
-    def attack_control_points_1_3(self, offset_x=0):
-        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
-        return np.array([
-            [370, 650],     # Comienza desde la posición actual
-            [130, 775],     # Punto intermedio
-            [495, 815],     # Otro punto
-            [player_x, 1000]  # Final en la posición X del jugador
-        ])   
-            
-    def attack_control_points_1_4(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(350, 600)
-        return np.array([
-            [240, -10] ,  # Comienza desde la posición actual
-            [150, 55],  # Un ejemplo de punto intermedio
-            [270, 85],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ]) 
-    def attack_control_points_2_1(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [self.x, self.y],  # Comienza desde la posición actual
-            [width - 174, 96],  # Un ejemplo de punto intermedio
-            [width - 50, 250],  # Otro punto
-            [width - 300, 395]  # Final en una posición aleatoria
-        ])
-        
-    def attack_control_points_2_2(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [width - 300, 395] ,  # Comienza desde la posición actual
-            [width - 480, 455],  # Un ejemplo de punto intermedio
-            [width - 470, 620],  # Otro punto
-            [width - 370, 650]  # Final en una posición aleatoria
-        ])
-        
-    def attack_control_points_2_3(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
-        return np.array([
-            [width - 370, 650],     # Comienza desde la posición actual
-            [width - 130, 775],     # Punto intermedio
-            [width - 495, 815],     # Otro punto
-            [player_x, 1000]  # Final en la posición X del jugador
-        ])   
-            
-    def attack_control_points_2_4(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(350, 600)
-        return np.array([
-            [width - 240, -10] ,  # Comienza desde la posición actual
-            [width - 150, 55],  # Un ejemplo de punto intermedio
-            [width - 270, 85],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ]) 
 
     def pause_and_capture_animation(self, delta_time):
         if self.performing_capture:
@@ -454,133 +380,6 @@ class Alien(pygame.sprite.Sprite):
         pygame.display.flip()  # Actualizar la pantalla
 
 
-
-    def attack_control_points_2(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
-        return np.array([
-            [200, 660],  # Comienza desde la posición actual
-            [300, 760],  # Un ejemplo de punto intermedio
-            [330, 780],  # Otro punto
-            [player_x, 1000]  # Final en una posición aleatoria
-        ])
-
-    def attack_control_points_3(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(120, 130)
-        return np.array([
-            
-            [120, -10],
-            #[random_x, -10],  # Comienza desde la posición actual
-            [110, 115],  # Un ejemplo de punto intermedio
-            [365, 80],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ])
-
-    def attack_control_points_4(self, random_xx, offset_x=0) :
-        return np.array([
-            
-            [self.x, self.y],  # Comienza desde la posición actual
-            [110 + random_xx, 270],  # Punto intermedio ajustado
-            [10 + random_xx, 340],  # Otro punto ajustado
-            [170 + random_xx, 430]   # Final ajustado
-        ])
-
-    def attack_control_points_5(self, random_xx, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(150, 160)
-        return np.array([
-            
-            [170 + random_xx, 430], 
-            [470 + random_xx, 605],
-            [435 + random_xx, 920],
-            [325 + random_xx, 925]
-    ])
-
-    def attack_control_points_6(self, random_xx, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        player_x = self.formation.game.player.rect.centerx  # Obtener la posición en X del jugador
-        return np.array([
-            
-            [325 + random_xx, 925],
-            [195 + random_xx, 920],  # Un ejemplo de punto intermedio
-            [150 + random_xx, 895],  # Otro punto
-            [self.x, self.y] # Final en una posición aleatoria
-        ])
-        
-    def attack_control_points_7(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(350, 600)
-        return np.array([
-            
-            [135, 340],
-            [150, 895],  # Un ejemplo de punto intermedio
-            [195, 920],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ])       
-
-    def attack_control_points_8(self, random_xx, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        return np.array([
-            [self.x, self.y],  # Comienza desde la posición actual
-            [width - 110 + random_xx, 270],  # Punto intermedio ajustado
-            [width - 10 + random_xx, 340],  # Otro punto ajustado
-            [width - 170 + random_xx, 430]   # Final en una posición aleatoria
-        ])
-
-    def attack_control_points_9(self, random_xx, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(155, 165)
-        return np.array([
-            [width - 170 + random_xx, 430], 
-            [width - 470 + random_xx, 605],
-            [width - 435 + random_xx, 920],
-            [width - 325 + random_xx, 925]
-        ])
-
-    def attack_control_points_10(self, random_xx, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        
-        return np.array([
-            [width - 325 + random_xx, 925],
-            [width - 195 + random_xx, 920],  # Un ejemplo de punto intermedio
-            [width - 150 + random_xx, 895],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ])    
-        
-    def attack_control_points_11(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(350, 600)
-        return np.array([
-            
-            [width - 170, -10],
-            [width - 190, 100],  # Un ejemplo de punto intermedio
-            [width - 265, 55],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ])   
-        
-        
-    def attack_control_points_12(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(160, 170)
-        return np.array([
-            [265, 660],  # Comienza desde la posición actual
-            [315, 760],  # Un ejemplo de punto intermedio
-            [285, 850],  # Otro punto
-            [random_x, 1000]  # Final en una posición aleatoria
-        ])
-
-    def attack_control_points_13(self, offset_x=0):
-        width = self.formation.game.settings.WIDTH
-        random_x = random.randint(140, 150)
-        return np.array([
-            [random_x, -10],  # Comienza desde la posición actual
-            [135, 40],  # Un ejemplo de punto intermedio
-            [315, 50],  # Otro punto
-            [self.x, self.y]  # Final en una posición aleatoria
-        ])          
-        
-        
     
     def shoot(self, delta_time):
         current_time = pygame.time.get_ticks()
@@ -884,7 +683,7 @@ class Alien(pygame.sprite.Sprite):
             #Renderizar el texto del mIndex
             text = self.formation.game.FONT.render(str(self.mIndex), True, self.game.settings.WHITE)
             text_rect = text.get_rect(center=(int(self.x), int(self.y)))
-            surface.blit(text, text_rect)
+            #surface.blit(text, text_rect)
             
         #self.game.resources.draw_bezier_path(surface)
         #self.debug_2(surface)
